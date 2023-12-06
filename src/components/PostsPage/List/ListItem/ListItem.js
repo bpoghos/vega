@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import classes from './list-item.module.css'
 import { FaPencil, FaTrash } from 'react-icons/fa6'
+import { useNavigate } from "react-router-dom";
 
 const ListItem = ({ post, data, setData }) => {
 
+
+    const navigate = useNavigate()
 
     const deletePost = async (id) => {
         try {
@@ -22,6 +25,10 @@ const ListItem = ({ post, data, setData }) => {
         }
     }
 
+
+    const handleEdit = () => {
+        navigate("/admin/edit")
+    }
 
 
     return (
@@ -62,7 +69,7 @@ const ListItem = ({ post, data, setData }) => {
                 </div>
             </div>
             <div className={classes.btnBox}>
-                <button className={classes.editBtn}><FaPencil /></button>
+                <button className={classes.editBtn} onClick={handleEdit}><FaPencil /></button>
                 <button onClick={() => deletePost(post._id)} className={classes.deleteBtn}><FaTrash /></button>
             </div>
         </div>

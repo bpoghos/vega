@@ -109,7 +109,7 @@ export default function Form() {
       </Container>
 
       <Container className='mt-4 pb-4 d-flex justify-content-center'>
-        <Btn label='ADD POST' type='success' addPosts={addPosts} />
+        <Btn type='success' addPosts={addPosts} />
         {isError ? <FormError /> : null}
         <Btn label='CANCEL' type='outline-secondary' />
       </Container>
