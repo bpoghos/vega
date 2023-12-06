@@ -1,7 +1,7 @@
 import React from 'react'
 import { Col, FormControl, FormLabel, Row } from 'react-bootstrap'
 
-export default function TextInput({ label, category, handleChange }) {
+export default function TextInput({ label, category, handleChange, error, values }) {
     return (
         <Row>
             <Col lg={4}></Col>
@@ -12,6 +12,7 @@ export default function TextInput({ label, category, handleChange }) {
                     type="text"
                     name={label}
                     onChange={(e) => handleChange(e, category)}
+                    isInvalid={!!error}
                 />
             </Col>
             <Col lg={4}></Col>

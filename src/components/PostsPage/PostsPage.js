@@ -9,22 +9,33 @@ const PostsPage = () => {
 
     const [data, setData] = useState([])
 
-    const getPosts = async () => {
-        const getData = await fetch('/api/posts')
-        const res = await getData.json()
-        setData(res)
-    }
 
+
+    const fetchData = async (category) => {
+        console.log(category);
+        const apiUrl = category ? `https://vega-project-server-ea1eccf7467b.herokuapp.com/api/${category}` : 'https://vega-project-server-ea1eccf7467b.herokuapp.com/api/all';
+        try {
+            const data = await fetch(apiUrl);
+            if (!data.ok) {
+                throw new Error(`Failed to fetch data: ${data.status} ${data.statusText}`);
+            }
+            const res = await data.json();
+            setData(res);
+            console.log(res);
+        } catch (error) {
+            console.error(error);
+        }
+    }
     useEffect(() => {
-        getPosts()
+        fetchData()
     }, [])
 
 
     return (
         <div style={{ width: '100%', background: '#000' }}>
             <Header icon={true} title={POSTS} />
-            <Categories />
-            <List data={data} />
+            <Categories setData={setData} />
+            <List data={data} setData={setData} />
         </div>
     )
 }

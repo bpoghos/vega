@@ -10,7 +10,7 @@ const DropdownComponent = ({ data, category, label, handleSelect, values }) => {
     <Row>
       <Col lg={4}></Col>
       <Col lg={4} className="d-flex align-items-center justify-content-end mb-4">
-        <FormLabel className="me-3 m-0">{label}:</FormLabel>
+        <FormLabel className="me-3 m-0" >{label}:</FormLabel>
         <Dropdown className={classes.btn} onSelect={(e) => handleSelect(e, category)}>
           <Dropdown.Toggle id="dropdown-basic">{selectedValue[0]?.label || '-Select-'}</Dropdown.Toggle>
           <Dropdown.Menu

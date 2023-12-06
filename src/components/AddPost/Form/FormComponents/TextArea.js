@@ -2,7 +2,7 @@ import React from 'react'
 import { Col, FormControl, FormLabel, Row } from 'react-bootstrap'
 
 
-export default function TextArea({ label, category, handleChange }) {
+export default function TextArea({ label, category, handleChange, error }) {
   return (
     <Row>
       <Col lg={4}></Col>
@@ -13,6 +13,7 @@ export default function TextArea({ label, category, handleChange }) {
           as='textarea'
           name={label}
           onChange={(e) => handleChange(e, category)}
+          isInvalid={!!error}
         />
       </Col>
       <Col lg={4}></Col>

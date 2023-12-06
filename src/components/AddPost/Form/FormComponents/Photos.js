@@ -11,13 +11,15 @@ const Photos = ({ handlePhotoChange, label, category }) => {
                     onChange={(e) => handlePhotoChange(e, category)}
                     type='file'
                     style={{
-                        width: '80px',
-                        height: '80px',
-                        margin: '10px'
-                    }} />
+                        // width: '80px',
+                        // height: '80px',
+                        margin: '10px',
+                    }}
+                    multiple={category === 'photos'}
+                />
                 <div style={{
-                    width: '80px',
-                    height: '80px',
+                    // width: '80px',
+                    // height: '80px',
                     backgroundColor: '#fff',
                     margin: '10px',
                     borderRadius: '5px'

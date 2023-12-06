@@ -18,7 +18,7 @@ export const CATEGORIES = [{
     label: 'Production Buildings'
 
 }, {
-    value: 'Reconstruction',
+    value: 'reconstruction',
     label: 'Reconstruction'
 
 }, {
