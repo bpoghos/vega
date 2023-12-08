@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Container, Row } from 'react-bootstrap';
 import { CATEGORIES } from '../../../helpers/constants';
 import Dropdown from './FormComponents/Dropdown';
-import TextInput from './FormComponents/TextInput';
 import { generateYears } from '../../../helpers/helperFunctions';
+import React, { useState } from 'react';
+import { Container, Row } from 'react-bootstrap';
+import TextInput from './FormComponents/TextInput';
 import TextArea from './FormComponents/TextArea';
 import Photos from './FormComponents/Photos';
 import Btn from './FormComponents/Btn';
@@ -11,7 +11,6 @@ import { useNavigate } from 'react-router-dom';
 import FormError from '../FormError';
 
 export default function Form() {
-  const getYears = generateYears();
   const [isError, setIsError] = useState(null);
   const [values, setValues] = useState({
     category: '',
@@ -22,15 +21,17 @@ export default function Form() {
     floor_area: '',
     client: '',
     architects: '',
-    profile_picture: '', // Corrected the field name
+    generalPhoto: '',
     multiplePhotos: [],
     threedPhotos: [],
     planPhotos: [],
     graphicPhotos: [],
     detailPhotos: [],
   });
+  const getYears = generateYears();
 
   const navigate = useNavigate();
+  console.log(values);
 
   const handleSelect = (eventKey, category) => {
     setValues({ ...values, [category]: eventKey });
@@ -40,38 +41,50 @@ export default function Form() {
     setValues({ ...values, [category]: event.target.value });
   };
 
-  const handlePhotoChange = (event, category) => {
-    if (category === 'multiplePhotos') {
-      setValues({
-        ...values,
-        [category]: [...values[category], event.target.files[0]],
-      });
-    } else {
-      setValues({ ...values, [category]: event.target.files[0] });
-    }
+  const handlePhotosChange = (event, category) => {
+    const file = event.target.files[0];
+    setValues({ ...values, [category]: [...values[category], file] });
   };
+  const handlePhotoChange = (event, category) => {
+    const file = event.target.files[0];
+    setValues({ ...values, [category]: file });
+  };
+  console.log(values);
 
   const addPosts = async () => {
     const formData = new FormData();
+    formData.append('title', values.title)
+    formData.append('description', values.description)
+    formData.append('architects', values.architects)
+    formData.append('category', values.category)
+    formData.append('client', values.client)
+    formData.append('date', values.date)
+    formData.append('floor_area', values.floor_area)
+    formData.append('location', values.location)
+    formData.append('generalPhoto', values.generalPhoto)
+    for (const img of values.graphicPhotos) {
+      formData.append('graphicPhotos', img);
+    }
+    for (const img of values.multiplePhotos) {
+      formData.append('multiplePhotos', img);
+    }
+    for (const img of values.planPhotos) {
+      formData.append('planPhotos', img);
+    }
+    for (const img of values.threedPhotos) {
+      formData.append('threedPhotos', img);
+    }
+    for (const img of values.detailPhotos) {
+      formData.append('detailPhotos', img);
+    }
 
-    // Append values to FormData
-    Object.entries(values).forEach(([key, value]) => {
-      if (key === 'multiplePhotos') {
-        // Append multiple photos as an array
-        value.forEach((photo, index) => {
-          formData.append(`${key}[${index}]`, photo);
-        });
-      } else {
-        formData.append(key, value);
-      }
-    });
 
     try {
       const response = await fetch(`https://vega-project-server-ea1eccf7467b.herokuapp.com/api/create`, {
         method: 'POST',
         body: formData,
-      });
 
+      });
       const data = await response.json();
 
       navigate('/admin');
@@ -84,32 +97,32 @@ export default function Form() {
   return (
     <>
       <Container className="mt-5 border-bottom border-secondary-subtle">
-        <Dropdown data={CATEGORIES} handleSelect={handleSelect} label={'Category'} category={'category'} values={values} />
-        <TextInput label='Title' category={'title'} handleChange={handleChange} error={isError} values={values} />
-        <TextArea label='Description' category={'description'} handleChange={handleChange} error={isError} />
+        <TextInput label='Title' name={"title"} category={'title'} handleChange={handleChange} error={isError} values={values} />
+        <TextArea label='Description' name={"description"} category={'description'} handleChange={handleChange} error={isError} />
+        <Dropdown data={getYears} handleSelect={handleSelect} category={'date'} label={'Data'} values={values} />
       </Container>
 
       <Container className='mt-4 border-bottom border-secondary-subtle'>
-        <Dropdown data={getYears} handleSelect={handleSelect} category={'date'} label={'Data'} values={values} />
-        <TextInput label='Location' category={'location'} handleChange={handleChange} error={isError} values={values} />
-        <TextInput label='Floor area' category={'floor_area'} handleChange={handleChange} error={isError} />
-        <TextInput label='Client' category={'client'} handleChange={handleChange} error={isError} />
-        <TextInput label='Architects' category={'architects'} handleChange={handleChange} error={isError} />
+        <Dropdown data={CATEGORIES} handleSelect={handleSelect} label={'Category'} category={'category'} values={values} />
+        <TextInput label='Location' name={'location'} category={'location'} handleChange={handleChange} error={isError} values={values} />
+        <TextInput label='Floor area' name={'floor_area'} category={'floor_area'} handleChange={handleChange} error={isError} />
+        <TextInput label='Client' name={'client'} category={'client'} handleChange={handleChange} error={isError} />
+        <TextInput label='Architects' name={'architects'} category={'architects'} handleChange={handleChange} error={isError} />
       </Container>
 
       <Container className='mt-4 border-bottom border-secondary-subtle'>
         <Row>
-          <Photos label='Profile Photo' category={'profile_picture'} handlePhotoChange={handlePhotoChange} />
-          <Photos label='Multiple Photos' category={'multiplePhotos'} handlePhotoChange={handlePhotoChange} />
-          <Photos label='3D' category={'threedPhotos'} handlePhotoChange={handlePhotoChange} />
-          <Photos label='Plans' category={'planPhotos'} handlePhotoChange={handlePhotoChange} />
-          <Photos label='Graphics' category={'graphicPhotos'} handlePhotoChange={handlePhotoChange} />
-          <Photos label='Details' category={'detailPhotos'} handlePhotoChange={handlePhotoChange} />
+          <Photos label='Profile Photo' name={'generalPhoto'} category={'generalPhoto'} handlePhotoChange={handlePhotoChange} />
+          <Photos label='Multiple Photos' name={'multiplePhotos'} category={'multiplePhotos'} handlePhotoChange={handlePhotosChange} />
+          <Photos label='3D' name={'threedPhotos'} category={'threedPhotos'} handlePhotoChange={handlePhotosChange} />
+          <Photos label='Plans' name={'planPhotos'} category={'planPhotos'} handlePhotoChange={handlePhotosChange} />
+          <Photos label='Graphics' name={'graphicPhotos'} category={'graphicPhotos'} handlePhotoChange={handlePhotosChange} />
+          <Photos label='Details' name={'detailPhotos'} category={'detailPhotos'} handlePhotoChange={handlePhotosChange} />
         </Row>
       </Container>
 
       <Container className='mt-4 pb-4 d-flex justify-content-center'>
-        <Btn type='success' addPosts={addPosts} />
+        <Btn label='ADD POST' type='success' addPosts={addPosts} />
         {isError ? <FormError /> : null}
         <Btn label='CANCEL' type='outline-secondary' />
       </Container>

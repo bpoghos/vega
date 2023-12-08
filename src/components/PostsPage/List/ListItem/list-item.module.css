@@ -1,4 +1,4 @@
-.item{
+.item {
     width: 100%;
     height: 200px;
     background: #ffffff;
@@ -7,106 +7,128 @@
     display: flex;
     padding: 10px 0;
 }
-.itemImage{
+
+.itemImage {
     width: 350px;
     background-color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
-.generalInfoBox{
+
+.generalInfoBox {
     max-width: 400px;
     height: 180px;
     background-color: #fff;
     margin: 0 16px;
     border-radius: 10px;
-    box-shadow: 1px 3px 12px 2px rgba(0,0,0,0.1);
+    box-shadow: 1px 3px 12px 2px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
-.categoryBox{
+
+.categoryBox {
     padding: 0 10px;
     font-size: 14px;
 }
-.category{
+
+.category {
     padding: 5px 0px 5px 5px;
     margin: 0;
 }
-.titleBox{
+
+.titleBox {
     padding: 0 10px;
     font-size: 14px;
 }
-.title{
+
+.title {
     padding: 5px 200px 5px 5px;
     margin: 0;
 }
-.descriptionBox{
+
+.descriptionBox {
     padding: 0 10px;
     font-size: 14px;
 }
-.description{
+
+.description {
     margin: 0;
     padding: 5px 0px 5px 5px;
 }
-.currentInfoBox{
+
+.currentInfoBox {
     max-width: 400px;
     height: 180px;
     background-color: #fff;
     margin: 0 16px;
     border-radius: 10px;
-    box-shadow: 1px 3px 12px 2px rgba(0,0,0,0.1);
+    box-shadow: 1px 3px 12px 2px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
-.dateBox{
+
+.dateBox {
     padding: 0 10px;
     font-size: 14px;
 }
-.date{
+
+.date {
     padding: 5px 0px 5px 5px;
     margin: 0;
 }
-.locationBox{
+
+.locationBox {
     padding: 0 10px;
     font-size: 14px;
 }
-.location{
+
+.location {
     padding: 5px 0px 5px 5px;
     margin: 0;
 }
-.floorAreaBox{
+
+.floorAreaBox {
     padding: 0 10px;
     font-size: 14px;
 }
-.floorArea{
+
+.floorArea {
     padding: 5px 0px 5px 5px;
     margin: 0;
 }
-.clientBox{
+
+.clientBox {
     padding: 0 10px;
     font-size: 14px;
 }
-.client{
+
+.client {
     padding: 5px 0px 5px 5px;
     margin: 0;
 }
-.architectsBox{
+
+.architectsBox {
     padding: 0 10px;
     font-size: 14px;
 }
-.architects{
+
+.architects {
     padding: 5px 0px 5px 5px;
     margin: 0;
 }
-.btnBox{
+
+.btnBox {
     margin: 0 16px 0 auto;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
-.editBtn{
+
+.editBtn {
     width: 60px;
     height: 60px;
     padding: 5px;
@@ -118,14 +140,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.1);
+    box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.1);
     transition: all 0.3s;
 }
-.editBtn:hover{
+
+.editBtn:hover {
     background-color: #fff;
     color: #FE7D05;
 }
-.deleteBtn{
+
+.deleteBtn {
     width: 60px;
     height: 60px;
     padding: 5px;
@@ -137,10 +161,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0px 3px 7px 0px rgba(0,0,0,0.1);
+    box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.1);
     transition: all 0.3s;
 }
-.deleteBtn:hover{
+
+.deleteBtn:hover {
     background-color: #fff;
     color: rgb(218, 35, 35);
 }

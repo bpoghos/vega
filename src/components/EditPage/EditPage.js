@@ -5,7 +5,6 @@ import TextInput from './EditComponents/TextInput'
 import TextArea from './EditComponents/TextArea'
 import { CATEGORIES } from '../../helpers/constants'
 import Photos from './EditComponents/Photos'
-import Btn from './EditComponents/Photos'
 import { generateYears } from '../../helpers/helperFunctions'
 import FormError from '../AddPost/FormError'
 

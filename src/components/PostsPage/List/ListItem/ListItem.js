@@ -26,18 +26,16 @@ const ListItem = ({ post, data, setData }) => {
     }
 
 
-    const handleEdit = () => {
-        navigate("/admin/edit")
-    }
+
 
 
     return (
         <div className={classes.item}>
-            <div className={classes.itemImage}>
+            <div className={classes.itemImage} onClick={() => navigate(`/admin/posts/${post._id}`)}>
                 <img
                     style={{ height: '100%', borderRadius: '10px', }}
-                    src={post.profile}
-                    alt={post.profile_picture}>
+                    src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${post.title}/${post.generalPhoto}`}
+                    alt={post.generalPhoto}>
                 </img>
             </div>
             <div className={classes.generalInfoBox}>
@@ -69,7 +67,7 @@ const ListItem = ({ post, data, setData }) => {
                 </div>
             </div>
             <div className={classes.btnBox}>
-                <button className={classes.editBtn} onClick={handleEdit}><FaPencil /></button>
+                <button className={classes.editBtn}><FaPencil /></button>
                 <button onClick={() => deletePost(post._id)} className={classes.deleteBtn}><FaTrash /></button>
             </div>
         </div>

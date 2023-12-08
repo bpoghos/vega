@@ -1,0 +1,142 @@
+.title {
+    margin: 20px auto;
+    width: 800px;
+    padding: 20px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.date {
+    margin: 20px auto;
+    width: 800px;
+    padding: 20px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+
+
+.generalPhoto {
+    margin: 20px auto;
+    width: 800px;
+    padding: 20px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    background-color: #fff;
+    font-weight: bold;
+}
+
+.generalPhoto img {
+    margin: 10px;
+    border-radius: 5px;
+    width: 200px;
+}
+
+.multiplePhotos {
+    margin: 20px auto;
+    width: 800px;
+    padding: 20px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    background-color: #fff;
+    font-weight: bold;
+
+}
+
+.multiplePhotosScroll {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.multiplePhotos img {
+    margin: 10px;
+    border-radius: 5px;
+    width: 200px;
+    display: inline-block;
+}
+
+.planPhotos {
+    margin: 20px auto;
+    width: 800px;
+    padding: 20px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    background-color: #fff;
+    font-weight: bold;
+}
+
+.planPhotosScroll {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.planPhotos img {
+    margin: 10px;
+    border-radius: 5px;
+    width: 200px;
+}
+
+.threedPhotos {
+    margin: 20px auto;
+    width: 800px;
+    padding: 20px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    background-color: #fff;
+    font-weight: bold;
+}
+
+.threedPhotosScroll {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.threedPhotos img {
+    margin: 10px;
+    border-radius: 5px;
+    width: 200px;
+}
+
+.graphicPhotos {
+    margin: 20px auto;
+    width: 800px;
+    padding: 20px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    background-color: #fff;
+    font-weight: bold;
+}
+
+.graphicPhotosScroll {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.graphicPhotos img {
+    margin: 10px;
+    border-radius: 5px;
+    width: 200px;
+}
+
+.detailPhotos {
+    margin: 20px auto;
+    width: 800px;
+    padding: 20px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    background-color: #fff;
+    font-weight: bold;
+}
+
+.detailPhotosScroll {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.detailPhotos img {
+    margin: 10px;
+    border-radius: 5px;
+    width: 200px;
+}
