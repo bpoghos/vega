@@ -31,7 +31,7 @@ export default function Form() {
   const getYears = generateYears();
 
   const navigate = useNavigate();
-  console.log(values);
+
 
   const handleSelect = (eventKey, category) => {
     setValues({ ...values, [category]: eventKey });
@@ -49,7 +49,7 @@ export default function Form() {
     const file = event.target.files[0];
     setValues({ ...values, [category]: file });
   };
-  console.log(values);
+
 
   const addPosts = async () => {
     const formData = new FormData();

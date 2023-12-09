@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Container, Row } from 'react-bootstrap'
 import Dropdown from './EditComponents/Dropdown'
 import TextInput from './EditComponents/TextInput'
@@ -9,32 +9,57 @@ import { generateYears } from '../../helpers/helperFunctions'
 import FormError from '../AddPost/FormError'
 
 import styles from './EditPage.module.css'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import Header from '../../shared'
 
 
 const EditPage = () => {
+    const [data, setData] = useState([])
 
+
+    const params = useParams()
     const navigate = useNavigate()
+
+
+
+    const fetchData = async () => {
+        try {
+            const data = await fetch(`https://vega-project-server-ea1eccf7467b.herokuapp.com/api/posts/${params.id}`);
+            if (!data.ok) {
+                throw new Error(`Failed to fetch data: ${data.status} ${data.statusText}`);
+            }
+            const res = await data.json();
+            setData(res);
+            console.log(res);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    useEffect(() => {
+        fetchData()
+    }, [])
+
+
 
     const getYears = generateYears();
     const [isError, setIsError] = useState(null);
     const [values, setValues] = useState({
         category: '',
-        title: '',
+        title: data.title,
         description: '',
         date: '',
         location: '',
         floor_area: '',
-        client: '',
+        client: data.client,
         architects: '',
-        profile_picture: '', // Corrected the field name
+        profile_picture: '',
         multiplePhotos: [],
         threedPhotos: [],
         planPhotos: [],
         graphicPhotos: [],
         detailPhotos: [],
     });
-
+    console.log(values);
 
     const handleSelect = () => {
 
@@ -57,9 +82,10 @@ const EditPage = () => {
 
     return (
         <>
+            <Header backIcon={true} title="Edit" icon={true} />
             <Container className="mt-5 border-bottom border-secondary-subtle">
                 <Dropdown data={CATEGORIES} handleSelect={handleSelect} label={'Category'} category={'category'} values={values} />
-                <TextInput label='Title' category={'title'} handleChange={handleChange} error={isError} values={values} />
+                <TextInput label='Title' category={'title'} handleChange={handleChange} error={isError} values={values.title} />
                 <TextArea label='Description' category={'description'} handleChange={handleChange} error={isError} />
             </Container>
 

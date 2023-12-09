@@ -1,32 +1,49 @@
-import React from 'react'
-import { Col, FormControl, FormLabel } from 'react-bootstrap'
-import styles from './Photos.module.css'
+import React, { useState } from 'react';
+import { Col, FormControl, FormLabel } from 'react-bootstrap';
+import styles from './Photos.module.css';
 
 const Photos = ({ handlePhotoChange, label, category }) => {
+    const [selectedImages, setSelectedImages] = useState([]);
+
+    const handleChange = (e) => {
+        handlePhotoChange(e, category);
+
+        const files = e.target.files;
+        const imagesArray = Array.from(files).map(file => URL.createObjectURL(file));
+        setSelectedImages((prevState) => [...prevState, ...imagesArray]);
+    };
+
     return (
         <Col className='d-flex' lg={12}>
             <div className={styles.imageContainer}>
                 <FormLabel className='m-auto me-0 ms-0'>{label}:</FormLabel>
                 <FormControl
-                    onChange={(e) => handlePhotoChange(e, category)}
+                    onChange={handleChange}
                     type='file'
                     style={{
-                        // width: '80px',
-                        // height: '80px',
                         margin: '10px',
                     }}
                     multiple
                 />
-                <div style={{
-                    // width: '80px',
-                    // height: '80px',
-                    backgroundColor: '#fff',
-                    margin: '10px',
-                    borderRadius: '5px'
-                }}></div>
+                {selectedImages.map((image, index) => (
+                    <div key={index} style={{
+                        backgroundColor: '#fff',
+                        margin: '10px',
+                        borderRadius: '5px',
+                    }}>
+                        <img
+                            src={image}
+                            alt={`Selected ${index + 1}`}
+                            style={{
+                                maxHeight: '100px',
+                                borderRadius: '5px',
+                            }}
+                        />
+                    </div>
+                ))}
             </div>
         </Col>
-    )
+    );
 }
 
-export default Photos
+export default Photos;

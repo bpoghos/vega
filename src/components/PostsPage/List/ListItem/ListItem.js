@@ -47,52 +47,10 @@ const ListItem = ({ post, data, setData }) => {
                     </div>
                 </div>
                 <div className={classes.btnBox}>
-                    <button className={classes.editBtn}><FaPencil /></button>
+                    <button className={classes.editBtn} onClick={() => navigate(`/admin/edit/${post._id}`)}><FaPencil /></button>
                     <button onClick={() => deletePost(post._id)} className={classes.deleteBtn}><FaTrash /></button>
                 </div>
             </div>
-
-            {/* <div className={classes.item}>
-                <div className={classes.itemImage} onClick={() => navigate(`/admin/posts/${post._id}`)}>
-                    <img
-                        style={{ height: '100%', borderRadius: '10px', }}
-                        src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${post.title}/${post.generalPhoto}`}
-                        alt={post.generalPhoto}>
-                    </img>
-                </div>
-                <div className={classes.generalInfoBox}>
-                    <div className={classes.categoryBox}>
-                        <p className={classes.category}><strong>Category:</strong>{post.category}</p>
-                    </div>
-                    <div className={classes.titleBox}>
-                        <p className={classes.title}><strong>Title:</strong>{post.title}</p>
-                    </div>
-                    <div className={classes.descriptionBox}>
-                        <p className={classes.description}><strong>Description:</strong>{post.description}</p>
-                    </div>
-                </div>
-                <div className={classes.currentInfoBox}>
-                    <div className={classes.dateBox}>
-                        <p className={classes.date}><strong>Date:</strong>{post.date}</p>
-                    </div>
-                    <div className={classes.locationBox}>
-                        <p className={classes.location}><strong>Location:</strong>{post.location}</p>
-                    </div>
-                    <div className={classes.floorAreaBox}>
-                        <p className={classes.floorArea}><strong>Floor area:</strong>{post.floor_area}&#13217;</p>
-                    </div>
-                    <div className={classes.clientBox}>
-                        <p className={classes.client}><strong>Client:</strong>{post.client}</p>
-                    </div>
-                    <div className={classes.architectsBox}>
-                        <p className={classes.architects}><strong>Architects:</strong>{post.architects}</p>
-                    </div>
-                </div>
-                <div className={classes.btnBox}>
-                    <button className={classes.editBtn}><FaPencil /></button>
-                    <button onClick={() => deletePost(post._id)} className={classes.deleteBtn}><FaTrash /></button>
-                </div>
-            </div> */}
         </>
 
     )

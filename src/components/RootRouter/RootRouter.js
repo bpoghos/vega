@@ -19,7 +19,7 @@ export default function RootRouter() {
         <Route path="/admin" element={<HomePage />} />
         <Route path="/admin/posts" element={<PostsPage />} />
         <Route path="/admin/add-post" element={<AddPost />} />
-        <Route path="/admin/edit" element={<EditPage />} />
+        <Route path="/admin/edit/:id" element={<EditPage />} />
         <Route path="/admin/posts/:id" element={<SinglePage />} />
       </Routes>
     </div>

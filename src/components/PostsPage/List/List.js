@@ -16,7 +16,7 @@ const List = ({ data, setData }) => {
     })
 
     return (
-        <Container>
+        <Container style={{ overflowY: "auto", maxHeight: "440px" }}>
             <Row>
                 {listPosts}
             </Row>

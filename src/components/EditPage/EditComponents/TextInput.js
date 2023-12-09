@@ -12,6 +12,7 @@ export default function TextInput({ label, category, handleChange, error, values
                     type="text"
                     name={label}
                     onChange={(e) => handleChange(e, category)}
+                    value={values}
                     isInvalid={!!error}
                 />
             </Col>
