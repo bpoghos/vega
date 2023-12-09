@@ -15,7 +15,7 @@ const Photos = ({ handlePhotoChange, label, category }) => {
                         // height: '80px',
                         margin: '10px',
                     }}
-                    multiple={category === 'photos'}
+                    multiple
                 />
                 <div style={{
                     // width: '80px',

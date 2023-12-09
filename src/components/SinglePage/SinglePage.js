@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styles from "./SinglePage.module.css"
+import Header from "../../shared/Header/Header"
+import ImageModal from '../Modal/Modal'
 
 const SinglePage = () => {
 
     const params = useParams()
     const [data, setData] = useState([])
     const [post, setPost] = useState()
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [selectedImageUrl, setSelectedImageUrl] = useState('');
 
     const fetchData = async () => {
         try {
@@ -26,10 +30,21 @@ const SinglePage = () => {
     }, [])
 
 
+    const openModal = (imageUrl) => {
+        setModalIsOpen(true);
+        setSelectedImageUrl(imageUrl);
+    };
+
+    const closeModal = () => {
+        setModalIsOpen(false);
+        setSelectedImageUrl('');
+    };
+
 
 
     return (
         <div>
+            <Header param={data._id} backIcon={true} edittIcon={true} icon={false} title="Single Page" />
             <div className={styles.title}>
                 <h1><strong>Title:</strong> {data.title}</h1>
                 <h3><strong>Category:</strong> {data.category}</h3>
@@ -43,89 +58,117 @@ const SinglePage = () => {
                 <p><strong>Architects:</strong> {data.architects}</p>
             </div>
             <div className={styles.generalPhoto}>
-                <div >Profile Photo:
+                <div>
+                    Profile Photo:
                     <div>
-                        {
-                            data.title && data.generalPhoto ?
-                                <img alt='' src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/${data.generalPhoto}`} /> : null
-                        }
+                        {data.title && data.generalPhoto ? (
+                            <img
+                                alt=''
+                                src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/${data.generalPhoto}`}
+                                onClick={() => openModal(`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/${data.generalPhoto}`)}
+                                style={{ cursor: 'zoom-in' }}
+                            />
+                        ) : null}
                     </div>
                 </div>
             </div>
 
             <div className={styles.multiplePhotos}>
-                <div>Photos:
+                <div>
+                    Photos:
                     <div className={styles.multiplePhotosScroll}>
-                        {
-                            data.title && data.multiplePhotos ?
-                                data.multiplePhotos.map(d => (
-                                    <img key={d} alt='' src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/multi/${d}`} />
-                                ))
-                                : null
-                        }
+                        {data.title && data.multiplePhotos
+                            ? data.multiplePhotos.map((d) => (
+                                <img
+                                    key={d}
+                                    alt=''
+                                    src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/multi/${d}`}
+                                    onClick={() => openModal(`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/multi/${d}`)}
+                                    style={{ cursor: 'zoom-in' }}
+                                />
+                            ))
+                            : null}
                     </div>
                 </div>
             </div>
 
             <div className={styles.planPhotos}>
-                <div>Plans:
+                <div>
+                    Plans:
                     <div className={styles.planPhotosScroll}>
-
-                        {
-                            data.title && data.planPhotos ?
-                                data.planPhotos.map(d => (
-                                    <img key={d} alt='' src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/plan/${d}`} />
-                                ))
-                                : null
-                        }
+                        {data.title && data.planPhotos
+                            ? data.planPhotos.map((d) => (
+                                <img
+                                    key={d}
+                                    alt=''
+                                    src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/plan/${d}`}
+                                    onClick={() => openModal(`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/plan/${d}`)}
+                                    style={{ cursor: 'zoom-in' }}
+                                />
+                            ))
+                            : null}
                     </div>
                 </div>
             </div>
 
             <div className={styles.threedPhotos}>
-                <div>3D:
+                <div>
+                    3D:
                     <div className={styles.threedPhotosScroll}>
-                        {
-                            data.title && data.threedPhotos ?
-                                data.threedPhotos.map(d => (
-                                    <img key={d} alt='' src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/threed/${d}`} />
-                                ))
-                                : null
-                        }
+                        {data.title && data.threedPhotos
+                            ? data.threedPhotos.map((d) => (
+                                <img
+                                    key={d}
+                                    alt=''
+                                    src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/threed/${d}`}
+                                    onClick={() => openModal(`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/threed/${d}`)}
+                                    style={{ cursor: 'zoom-in' }}
+                                />
+                            ))
+                            : null}
                     </div>
                 </div>
             </div>
 
             <div className={styles.graphicPhotos}>
-                <div>Graphics:
+                <div>
+                    Graphics:
                     <div className={styles.graphicPhotosScroll}>
-                        {
-                            data.title && data.graphicPhotos ?
-                                data.graphicPhotos.map(d => (
-                                    <img key={d} alt='' src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/graphic/${d}`} />
-                                ))
-                                : null
-                        }
+                        {data.title && data.graphicPhotos
+                            ? data.graphicPhotos.map((d) => (
+                                <img
+                                    key={d}
+                                    alt=''
+                                    src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/graphic/${d}`}
+                                    onClick={() => openModal(`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/graphic/${d}`)}
+                                    style={{ cursor: 'zoom-in' }}
+                                />
+                            ))
+                            : null}
                     </div>
                 </div>
             </div>
 
             <div className={styles.detailPhotos}>
-                <div>Details:
+                <div>
+                    Details:
                     <div className={styles.detailPhotosScroll}>
-                        {
-                            data.title && data.detailPhotos ?
-                                data.detailPhotos.map(d => (
-                                    <img key={d} alt='' src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/detail/${d}`} />
-                                ))
-                                : null
-                        }
+                        {data.title && data.detailPhotos
+                            ? data.detailPhotos.map((d) => (
+                                <img
+                                    key={d}
+                                    alt=''
+                                    src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/detail/${d}`}
+                                    onClick={() => openModal(`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/detail/${d}`)}
+                                    style={{ cursor: 'zoom-in' }}
+                                />
+                            ))
+                            : null}
                     </div>
                 </div>
             </div>
 
-
-
+            <ImageModal isOpen={modalIsOpen} onClose={closeModal} imageUrl={selectedImageUrl} />
 
         </div>
     )

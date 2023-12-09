@@ -32,7 +32,7 @@ const PostsPage = () => {
 
 
     return (
-        <div style={{ width: '100%', background: '#000' }}>
+        <div style={{ width: '100%', height: '100vh', background: '#000' }}>
             <Header icon={true} title={POSTS} />
             <Categories setData={setData} />
             <List data={data} setData={setData} />
