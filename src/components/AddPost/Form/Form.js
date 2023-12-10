@@ -61,7 +61,9 @@ export default function Form() {
     formData.append('date', values.date)
     formData.append('floor_area', values.floor_area)
     formData.append('location', values.location)
-    formData.append('generalPhoto', values.generalPhoto)
+    if (values.generalPhoto) {
+      formData.append('generalPhoto', values.generalPhoto);
+    }
     for (const img of values.graphicPhotos) {
       formData.append('graphicPhotos', img);
     }
@@ -77,7 +79,6 @@ export default function Form() {
     for (const img of values.detailPhotos) {
       formData.append('detailPhotos', img);
     }
-
 
     try {
       const response = await fetch(`https://vega-project-server-ea1eccf7467b.herokuapp.com/api/create`, {
@@ -129,3 +130,4 @@ export default function Form() {
     </>
   );
 }
+

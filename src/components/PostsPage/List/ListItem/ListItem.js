@@ -1,12 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import classes from './list-item.module.css'
 import { FaPencil, FaTrash } from 'react-icons/fa6'
 import { useNavigate } from "react-router-dom";
 
 const ListItem = ({ post, data, setData }) => {
-
+    const [image, setImage] = useState()
 
     const navigate = useNavigate()
+
+    useEffect(() => {
+        const fetchImage = async () => {
+            try {
+                const response = await fetch(`https://vega-project-server-ea1eccf7467b.herokuapp.com/api/posts/${post._id}`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+                }
+                const postData = await response.json();
+
+                const imageBlob = new Blob([new Uint8Array(postData.generalPhoto.data)]);
+                const imageUrl = URL.createObjectURL(imageBlob);
+                setImage(imageUrl);
+            } catch (error) {
+                console.error("Error fetching image:", error);
+            }
+        };
+
+        fetchImage();
+    }, [post._id]);
 
     const deletePost = async (id) => {
         try {
@@ -26,9 +46,6 @@ const ListItem = ({ post, data, setData }) => {
     }
 
 
-
-
-
     return (
         <>
             <div className={classes.hatik}>
@@ -36,7 +53,7 @@ const ListItem = ({ post, data, setData }) => {
                     <div className={classes.hatikImage} >
                         <img
                             style={{ height: '100%', borderRadius: '10px', }}
-                            src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${post.title}/${post.generalPhoto}`}
+                            src={image}
                             alt={post.generalPhoto}>
                         </img>
                     </div>

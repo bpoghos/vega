@@ -3,14 +3,19 @@ import { useParams } from 'react-router-dom'
 import styles from "./SinglePage.module.css"
 import Header from "../../shared/Header/Header"
 import ImageModal from '../Modal/Modal'
-
 const SinglePage = () => {
 
     const params = useParams()
     const [data, setData] = useState([])
-    const [post, setPost] = useState()
+    const [image, setImage] = useState()
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [selectedImageUrl, setSelectedImageUrl] = useState('');
+    const [multiplePhotos, setMultiplePhotos] = useState([])
+    const [threedPhotos, setThreedPhotos] = useState([])
+    const [planPhotos, setPlanPhotos] = useState([])
+    const [graphicPhotos, setGraphicPhotos] = useState([])
+    const [setDetailPhotos] = useState([])
+
 
     const fetchData = async () => {
         try {
@@ -20,7 +25,44 @@ const SinglePage = () => {
             }
             const res = await data.json();
             setData(res);
-            console.log(res);
+            const imageBlob = new Blob([new Uint8Array(res.generalPhoto.data)], { type: 'image/png' });
+            const imageUrl = URL.createObjectURL(imageBlob);
+            setImage(imageUrl);
+            res.multiplePhotos.map((d) => {
+                const imageBlob = new Blob([new Uint8Array(d.data)], { type: 'image/png' });
+                const imageUrl = URL.createObjectURL(imageBlob);
+                setMultiplePhotos(multiplePhotos => [...multiplePhotos, imageUrl])
+                return imageUrl
+            })
+
+            res.threedPhotos.map((d) => {
+                const imageBlob = new Blob([new Uint8Array(d.data)], { type: 'image/png' });
+                const imageUrl = URL.createObjectURL(imageBlob);
+                setThreedPhotos(threedPhotos => [...threedPhotos, imageUrl])
+                return imageUrl
+            })
+
+            res.planPhotos.map((d) => {
+                const imageBlob = new Blob([new Uint8Array(d.data)], { type: 'image/png' });
+                const imageUrl = URL.createObjectURL(imageBlob);
+                setPlanPhotos(planPhotos => [...planPhotos, imageUrl])
+                return imageUrl
+            })
+
+            res.graphicPhotos.map((d) => {
+                const imageBlob = new Blob([new Uint8Array(d.data)], { type: 'image/png' });
+                const imageUrl = URL.createObjectURL(imageBlob);
+                setGraphicPhotos(graphicPhotos => [...graphicPhotos, imageUrl])
+                return imageUrl
+            })
+
+            res.detailPhotos.map((d) => {
+                const imageBlob = new Blob([new Uint8Array(d.data)], { type: 'image/png' });
+                const imageUrl = URL.createObjectURL(imageBlob);
+                setDetailPhotos(detailPhotos => [...detailPhotos, imageUrl])
+                return imageUrl
+            })
+
         } catch (error) {
             console.error(error);
         }
@@ -39,8 +81,6 @@ const SinglePage = () => {
         setModalIsOpen(false);
         setSelectedImageUrl('');
     };
-
-
 
     return (
         <div>
@@ -64,8 +104,8 @@ const SinglePage = () => {
                         {data.title && data.generalPhoto ? (
                             <img
                                 alt=''
-                                src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/${data.generalPhoto}`}
-                                onClick={() => openModal(`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/${data.generalPhoto}`)}
+                                src={image}
+                                onClick={() => openModal(image)}
                                 style={{ cursor: 'zoom-in' }}
                             />
                         ) : null}
@@ -78,12 +118,12 @@ const SinglePage = () => {
                     Photos:
                     <div className={styles.multiplePhotosScroll}>
                         {data.title && data.multiplePhotos
-                            ? data.multiplePhotos.map((d) => (
+                            ? multiplePhotos.map((d) => (
                                 <img
                                     key={d}
                                     alt=''
-                                    src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/multi/${d}`}
-                                    onClick={() => openModal(`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/multi/${d}`)}
+                                    src={d}
+                                    onClick={() => openModal(d)}
                                     style={{ cursor: 'zoom-in' }}
                                 />
                             ))
@@ -97,12 +137,12 @@ const SinglePage = () => {
                     Plans:
                     <div className={styles.planPhotosScroll}>
                         {data.title && data.planPhotos
-                            ? data.planPhotos.map((d) => (
+                            ? planPhotos.map((d) => (
                                 <img
                                     key={d}
                                     alt=''
-                                    src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/plan/${d}`}
-                                    onClick={() => openModal(`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/plan/${d}`)}
+                                    src={d}
+                                    onClick={() => openModal(d)}
                                     style={{ cursor: 'zoom-in' }}
                                 />
                             ))
@@ -116,12 +156,12 @@ const SinglePage = () => {
                     3D:
                     <div className={styles.threedPhotosScroll}>
                         {data.title && data.threedPhotos
-                            ? data.threedPhotos.map((d) => (
+                            ? threedPhotos.map((d) => (
                                 <img
                                     key={d}
                                     alt=''
-                                    src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/threed/${d}`}
-                                    onClick={() => openModal(`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/threed/${d}`)}
+                                    src={d}
+                                    onClick={() => openModal(d)}
                                     style={{ cursor: 'zoom-in' }}
                                 />
                             ))
@@ -135,12 +175,12 @@ const SinglePage = () => {
                     Graphics:
                     <div className={styles.graphicPhotosScroll}>
                         {data.title && data.graphicPhotos
-                            ? data.graphicPhotos.map((d) => (
+                            ? graphicPhotos.map((d) => (
                                 <img
                                     key={d}
                                     alt=''
-                                    src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/graphic/${d}`}
-                                    onClick={() => openModal(`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/graphic/${d}`)}
+                                    src={d}
+                                    onClick={() => openModal(d)}
                                     style={{ cursor: 'zoom-in' }}
                                 />
                             ))
@@ -158,8 +198,8 @@ const SinglePage = () => {
                                 <img
                                     key={d}
                                     alt=''
-                                    src={`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/detail/${d}`}
-                                    onClick={() => openModal(`https://vega-project-server-ea1eccf7467b.herokuapp.com/uploads/images/${data.title}/detail/${d}`)}
+                                    src={d}
+                                    onClick={() => openModal(d)}
                                     style={{ cursor: 'zoom-in' }}
                                 />
                             ))
