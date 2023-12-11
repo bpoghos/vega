@@ -12,7 +12,6 @@ const PostsPage = () => {
 
 
     const fetchData = async (category) => {
-        console.log(category);
         const apiUrl = category ? `https://vega-project-server-ea1eccf7467b.herokuapp.com/api/${category}` : 'https://vega-project-server-ea1eccf7467b.herokuapp.com/api/all';
         try {
             const data = await fetch(apiUrl);
@@ -21,7 +20,6 @@ const PostsPage = () => {
             }
             const res = await data.json();
             setData(res);
-            console.log(res);
         } catch (error) {
             console.error(error);
         }

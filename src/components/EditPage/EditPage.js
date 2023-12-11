@@ -14,7 +14,25 @@ import Header from '../../shared'
 
 
 const EditPage = () => {
-    const [data, setData] = useState([])
+    const [data, setData] = useState()
+    const getYears = generateYears();
+    const [isError, setIsError] = useState(null);
+    const [values, setValues] = useState({
+        category: '',
+        title: '',
+        description: '',
+        date: '',
+        location: '',
+        floor_area: '',
+        client: '',
+        architects: '',
+        profile_picture: '',
+        multiplePhotos: [],
+        threedPhotos: [],
+        planPhotos: [],
+        graphicPhotos: [],
+        detailPhotos: [],
+    });
 
 
     const params = useParams()
@@ -24,13 +42,29 @@ const EditPage = () => {
 
     const fetchData = async () => {
         try {
-            const data = await fetch(`https://vega-project-server-ea1eccf7467b.herokuapp.com/api/posts/${params.id}`);
-            if (!data.ok) {
-                throw new Error(`Failed to fetch data: ${data.status} ${data.statusText}`);
+            const getPost = await fetch(`https://vega-project-server-ea1eccf7467b.herokuapp.com/api/posts/${params.id}`);
+            if (!getPost.ok) {
+                throw new Error(`Failed to fetch getPost: ${getPost.status} ${getPost.statusText}`);
             }
-            const res = await data.json();
+            const res = await getPost.json();
             setData(res);
-            console.log(res);
+            setValues({
+                category: res.category,
+                title: res.title,
+                description: res.description,
+                date: res.date,
+                location: res.location,
+                floor_area: res.floor_area,
+                client: res.client,
+                architects: res.architects,
+                profile_picture: res.generalPhoto.data,
+                multiplePhotos: res.multiplePhotos.map(m => m.data),
+                threedPhotos: res.threedPhotos,
+                planPhotos: res.planPhotos,
+                graphicPhotos: res.graphicPhotos,
+                detailPhotos: res.detailPhotos,
+            });
+
         } catch (error) {
             console.error(error);
         }
@@ -39,38 +73,29 @@ const EditPage = () => {
         fetchData()
     }, [])
 
+    const one = values.multiplePhotos.map(m => m)
+    console.log(one[0]
+    );
 
 
-    const getYears = generateYears();
-    const [isError, setIsError] = useState(null);
-    const [values, setValues] = useState({
-        category: '',
-        title: data.title,
-        description: '',
-        date: '',
-        location: '',
-        floor_area: '',
-        client: data.client,
-        architects: '',
-        profile_picture: '',
-        multiplePhotos: [],
-        threedPhotos: [],
-        planPhotos: [],
-        graphicPhotos: [],
-        detailPhotos: [],
-    });
-    console.log(values);
 
-    const handleSelect = () => {
+    const handleSelect = (eventKey, category) => {
+        setValues({ ...values, [category]: eventKey });
+    };
 
-    }
-    const handleChange = () => {
+    const handleChange = (event, category) => {
+        setValues({ ...values, [category]: event.target.value });
+    };
 
-    }
+    const handlePhotosChange = (event, category) => {
+        const file = event.target.files[0];
+        setValues({ ...values, [category]: [...values[category], file] });
+    };
+    const handlePhotoChange = (event, category) => {
+        const file = event.target.files[0];
+        setValues({ ...values, [category]: file });
+    };
 
-    const handlePhotoChange = () => {
-
-    }
 
     const editPost = async () => {
 
@@ -80,31 +105,33 @@ const EditPage = () => {
         navigate(-1)
     }
 
+
+
     return (
         <>
             <Header backIcon={true} title="Edit" icon={true} />
             <Container className="mt-5 border-bottom border-secondary-subtle">
                 <Dropdown data={CATEGORIES} handleSelect={handleSelect} label={'Category'} category={'category'} values={values} />
                 <TextInput label='Title' category={'title'} handleChange={handleChange} error={isError} values={values.title} />
-                <TextArea label='Description' category={'description'} handleChange={handleChange} error={isError} />
+                <TextArea label='Description' category={'description'} handleChange={handleChange} error={isError} values={values.description} />
             </Container>
 
             <Container className='mt-4 border-bottom border-secondary-subtle'>
-                <Dropdown data={getYears} handleSelect={handleSelect} category={'date'} label={'Data'} values={values} />
-                <TextInput label='Location' category={'location'} handleChange={handleChange} error={isError} values={values} />
-                <TextInput label='Floor area' category={'floor_area'} handleChange={handleChange} error={isError} />
-                <TextInput label='Client' category={'client'} handleChange={handleChange} error={isError} />
-                <TextInput label='Architects' category={'architects'} handleChange={handleChange} error={isError} />
+                <Dropdown data={getYears} handleSelect={handleSelect} category={'date'} label={'Data'} values={values.date} />
+                <TextInput label='Location' category={'location'} handleChange={handleChange} error={isError} values={values.location} />
+                <TextInput label='Floor area' category={'floor_area'} handleChange={handleChange} error={isError} values={values.floor_area} />
+                <TextInput label='Client' category={'client'} handleChange={handleChange} error={isError} values={values.client} />
+                <TextInput label='Architects' category={'architects'} handleChange={handleChange} error={isError} values={values.architects} />
             </Container>
 
             <Container className='mt-4 border-bottom border-secondary-subtle'>
                 <Row>
                     <Photos label='Profile Photo' category={'profile_picture'} handlePhotoChange={handlePhotoChange} />
-                    <Photos label='Multiple Photos' category={'multiplePhotos'} handlePhotoChange={handlePhotoChange} />
-                    <Photos label='3D' category={'threedPhotos'} handlePhotoChange={handlePhotoChange} />
-                    <Photos label='Plans' category={'planPhotos'} handlePhotoChange={handlePhotoChange} />
-                    <Photos label='Graphics' category={'graphicPhotos'} handlePhotoChange={handlePhotoChange} />
-                    <Photos label='Details' category={'detailPhotos'} handlePhotoChange={handlePhotoChange} />
+                    <Photos label='Multiple Photos' category={'multiplePhotos'} handlePhotoChange={handlePhotosChange} />
+                    <Photos label='3D' category={'threedPhotos'} handlePhotoChange={handlePhotosChange} />
+                    <Photos label='Plans' category={'planPhotos'} handlePhotoChange={handlePhotosChange} />
+                    <Photos label='Graphics' category={'graphicPhotos'} handlePhotoChange={handlePhotosChange} />
+                    <Photos label='Details' category={'detailPhotos'} handlePhotoChange={handlePhotosChange} />
                 </Row>
             </Container>
 

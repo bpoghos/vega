@@ -4,7 +4,7 @@ import classes from '../EditPage.module.css'
 
 const DropdownComponent = ({ data, category, label, handleSelect, values }) => {
 
-  const selectedValue = data.filter((d) => d.value === values[category])
+  const selectedValue = data.filter((d) => d.value === values[category] && d.value === values[data])
 
   return (
     <Row>
