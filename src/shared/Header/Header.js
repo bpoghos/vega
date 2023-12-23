@@ -1,43 +1,44 @@
-import React from 'react'
+import React from 'react';
 import { FaArrowLeft, FaHouse, FaPencil } from 'react-icons/fa6';
-import classes from './header.module.css'
 import { Link, useNavigate } from 'react-router-dom';
+import styles from './header.module.css';
 
+export const Header = ({ icon, title, backIcon, edittIcon, param }) => {
+  const navigate = useNavigate();
 
-const Header = ({ icon, title, backIcon, edittIcon, param }) => {
+  const HomeIcon = () => (
+    <div className={styles.homeBtnBox}>
+      <Link to='/admin'><button className={styles.homeBtn}>
+        <FaHouse />
+      </button>
+      </Link>
+    </div>
+  );
 
-  const navigate = useNavigate()
+  const BackIcon = () => (
+    <div className={styles.arrowBtnBox}>
+      <button className={styles.homeBtn} onClick={() => navigate(-1)}>
+        <FaArrowLeft />
+      </button>
+    </div>
+  );
+
+  const EditIcon = () => (
+    <div className={styles.editBtnBox}>
+      <button className={styles.homeBtn} onClick={() => navigate(`/admin/posts/${param}`)}>
+        <FaPencil />
+      </button>
+    </div>
+  );
 
   return (
-    <header className={classes.header}>
-      <div className={classes.icons}>
-        {
-          icon ?
-            <div className={classes.homeBtnBox}>
-              <Link to='/admin'><button className={classes.homeBtn}><FaHouse /></button></Link>
-            </div>
-            : null
-        }
-        {
-          backIcon ?
-            <div className={classes.arrowBtnBox}>
-              <button className={classes.homeBtn} onClick={() => navigate(-1)}><FaArrowLeft /></button>
-            </div>
-            : null
-        }
-        {
-          edittIcon ?
-            <div className={classes.editBtnBox}>
-              <button className={classes.homeBtn} onClick={() => navigate(`/admin/posts/${param}`)}><FaPencil /></button>
-            </div>
-            : null
-        }
-
+    <header className={styles.header}>
+      <div className={styles.icons}>
+        {icon && <HomeIcon />}
+        {backIcon && <BackIcon />}
+        {edittIcon && <EditIcon />}
       </div>
-
-      <h1 className={classes.title}>{title}</h1>
+      <h1 className={styles.title}>{title}</h1>
     </header>
   );
 }
-
-export default Header

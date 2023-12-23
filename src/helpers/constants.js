@@ -2,6 +2,8 @@ export const HOME = "Home"
 export const VEGA_PROJECT_ADMIN = "Vega Project Admin"
 export const POSTS = "Posts"
 export const ADD_POST = "Add Post"
+export const EDIT_POST = "Edit Post"
+
 export const CATEGORIES = [{
     value: 'residential',
     label: "Residential Structures"
@@ -27,3 +29,5 @@ export const CATEGORIES = [{
 
 }
 ]
+
+export const BASE_URL = 'https://vega-project-server-ea1eccf7467b.herokuapp.com/api/';
