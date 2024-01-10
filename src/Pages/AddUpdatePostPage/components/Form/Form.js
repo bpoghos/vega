@@ -6,9 +6,17 @@ import { CATEGORIES } from '../../../../helpers/constants';
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'
 import { fetchPostById } from '../../../../services/posts';
+import AWS from 'aws-sdk';
+
 
 export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPostPage, setIsLoading, setError }) => {
 
+  AWS.config.update({
+    region: 'eu-north-1',
+    accessKeyId: 'AKIA47CRVPKUXKOGIH6H',
+    secretAccessKey: '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'
+  });
+  
   const params = useParams();
   const navigate = useNavigate();
 
@@ -43,6 +51,7 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
     detailPhotos: [],
   });
 
+
   useEffect(() => {
     const fetchDefaultData = async () => {
       try {
@@ -54,6 +63,53 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
       const signal = abortController.current.signal;
         setIsLoading(true);
         const res = await fetchPostById(params.id, signal);
+        const s3 = new AWS.S3();
+        const genImageUrl = s3.getSignedUrl('getObject', {
+            Bucket: 'vega-project',
+            Key: res.generalPhoto,
+            Expires: 60 
+        });
+        console.log(genImageUrl);
+        const multipleImageUrl = res.multiplePhotos.map((image) => {
+            return s3.getSignedUrl('getObject', {
+                Bucket: 'vega-project',
+                Key: image,
+                Expires: 60 // URL expiry time in seconds
+            });
+        }
+        ); 
+        const threedImageUrl = res.threedPhotos.map((image) => {
+            return s3.getSignedUrl('getObject', {
+                Bucket: 'vega-project',
+                Key: image,
+                Expires: 60 // URL expiry time in seconds
+            });
+        }
+        );
+        const planImageUrl = res.planPhotos.map((image) => {
+            return s3.getSignedUrl('getObject', {
+                Bucket: 'vega-project',
+                Key: image,
+                Expires: 60 // URL expiry time in seconds
+            });
+        }
+        );
+        const graphicImageUrl = res.graphicPhotos.map((image) => {
+            return s3.getSignedUrl('getObject', {
+                Bucket: 'vega-project',
+                Key: image,
+                Expires: 60 // URL expiry time in seconds
+            });
+        }
+        );
+        const detailImageUrl = res.detailPhotos.map((image) => {
+            return s3.getSignedUrl('getObject', {
+                Bucket: 'vega-project',
+                Key: image,
+                Expires: 60 // URL expiry time in seconds
+            });
+        }
+        );
 
         setValues((v) => ({
           ...v,
@@ -65,13 +121,14 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
           floor_area: res.floor_area,
           client: res.client,
           architects: res.architects,
-          generalPhoto: [res.generalPhoto.data] || [],
-          multiplePhotos: res.multiplePhotos.map(r => r.data) || [],
-          threedPhotos: res.threedPhotos.map(r => r.data) || [],
-          planPhotos: res.planPhotos.map(r => r.data) || [],
-          graphicPhotos: res.graphicPhotos.map(r => r.data) || [],
-          detailPhotos: res.detailPhotos.map(r => r.data) || [],
+          generalPhoto: genImageUrl,
+          multiplePhotos: multipleImageUrl,
+          threedPhotos: threedImageUrl,
+          planPhotos: planImageUrl,
+          graphicPhotos: graphicImageUrl,
+          detailPhotos: detailImageUrl,
         }));
+        
       } catch (error) {
         setValues(null)
         setError(error.message);
@@ -100,7 +157,7 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
     setFieldErrors({ ...fieldErrors, [category]: false });
   };
 
-  const removeImage = (index, category) => {
+  const removeImage = (index, category) => { // modify with spaecial category images, not whole array
     if (category === 'generalPhoto') {
       setValues({ ...values, [category]: '' });
       return;
@@ -219,14 +276,14 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
         <Row>
           <Photos label='Profile Photo' 
             name={'generalPhoto'}
-            values={values}
+            values={values.generalPhoto ? [values.generalPhoto] : []}
             removeImage={removeImage}
             category={'generalPhoto'} 
             handlePhotoChange={handlePhotoChange} 
             error={fieldErrors.generalPhoto} 
           />
           <Photos label='Multiple Photos' 
-            values={values} 
+            values={values.multiplePhotos} 
             name={'multiplePhotos'} 
             category={'multiplePhotos'} 
             handlePhotoChange={handlePhotosChange}
@@ -235,7 +292,7 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
           <Photos
             removeImage={removeImage}
             label='3D' 
-            values={values} 
+            values={values.threedPhotos} 
             name={'threedPhotos'} 
             category={'threedPhotos'} 
             handlePhotoChange={handlePhotosChange} 
@@ -243,7 +300,7 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
           <Photos
             removeImage={removeImage}
             label='Plans' 
-            values={values} 
+            values={values.planPhotos} 
             name={'planPhotos'} 
             category={'planPhotos'} 
             handlePhotoChange={handlePhotosChange} 
@@ -251,7 +308,7 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
           <Photos
             removeImage={removeImage}
             label='Graphics' 
-            values={values} 
+            values={values.graphicPhotos} 
             name={'graphicPhotos'} 
             category={'graphicPhotos'} 
             handlePhotoChange={handlePhotosChange} 
@@ -259,7 +316,7 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
           <Photos
             removeImage={removeImage}
             label='Details' 
-            values={values} 
+            values={values.detailPhotos} 
             name={'detailPhotos'} 
             category={'detailPhotos'} 
             handlePhotoChange={handlePhotosChange} 

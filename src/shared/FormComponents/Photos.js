@@ -26,26 +26,26 @@ export const Photos = ({ handlePhotoChange, label, category, error, values, remo
         }
     }
 
-    useEffect(() => {
-        if (values[category] && values[category] instanceof File) {
-            setSelectedImages([URL.createObjectURL(values[category])]);
-        } else if (values[category] && values[category] instanceof Blob) {
-            const imageBlob = new Blob([new Uint8Array(values[category])], { type: 'image/png' });
-            const imageUrl = URL.createObjectURL(imageBlob);
-            setSelectedImages([imageUrl]);
-        } else if (values[category] && values[category].length) {
-            const convertedImages = values[category].map((d) => {
-                if (d?.length > 100) {
-                    const imageBlob = new Blob([new Uint8Array(d)], { type: 'image/png' });
-                    const imageUrl = URL.createObjectURL(imageBlob);
-                    return imageUrl;
-                } else {
-                    return URL.createObjectURL(d);
-                }
-            });
-            setSelectedImages(convertedImages);
-        }
-    }, [values])
+    // useEffect(() => {
+    //     if (values[category] && values[category] instanceof File) {
+    //         setSelectedImages([URL.createObjectURL(values[category])]);
+    //     } else if (values[category] && values[category] instanceof Blob) {
+    //         const imageBlob = new Blob([new Uint8Array(values[category])], { type: 'image/png' });
+    //         const imageUrl = URL.createObjectURL(imageBlob);
+    //         setSelectedImages([imageUrl]);
+    //     } else if (values[category] && values[category].length) {
+    //         const convertedImages = values[category].map((d) => {
+    //             if (d?.length > 100) {
+    //                 const imageBlob = new Blob([new Uint8Array(d)], { type: 'image/png' });
+    //                 const imageUrl = URL.createObjectURL(imageBlob);
+    //                 return imageUrl;
+    //             } else {
+    //                 return URL.createObjectURL(d);
+    //             }
+    //         });
+    //         setSelectedImages(convertedImages);
+    //     }
+    // }, [values])
 
     return (
         <Col className='d-flex' lg={12}>
@@ -61,7 +61,7 @@ export const Photos = ({ handlePhotoChange, label, category, error, values, remo
                     multiple={category !== 'generalPhoto'}
                 />
                 {error ? <FormError title={label} /> : null}
-                {selectedImages.map((image, index) => (
+                {values.map((image, index) => (
                     <div key={index} style={{
                         backgroundColor: '#fff',
                         margin: '10px',

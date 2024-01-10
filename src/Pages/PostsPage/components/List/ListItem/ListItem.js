@@ -3,8 +3,24 @@ import { FaPencil, FaTrash } from 'react-icons/fa6'
 import { useNavigate } from "react-router-dom";
 import { deletePost } from "../../../../../services/posts";
 import styles from './list-item.module.css'
+import AWS from 'aws-sdk';
+
+AWS.config.update({
+    region: 'eu-north-1',
+    accessKeyId: 'AKIA47CRVPKUXKOGIH6H',
+    secretAccessKey: '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'
+  });
 
 export const ListItem = ({ post, data, setData, image }) => {
+
+    const s3 = new AWS.S3();
+const imageUrl = s3.getSignedUrl('getObject', {
+  Bucket: 'vega-project',
+  Key: image,
+  Expires: 60 // URL expiry time in seconds
+});
+
+console.log(imageUrl);
 
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
@@ -34,7 +50,7 @@ export const ListItem = ({ post, data, setData, image }) => {
                     <div className={styles.hatikImage} >
                         <img
                             style={{ height: '100%', borderRadius: '10px', }}
-                            src={image}
+                            src={imageUrl}
                             alt={post.generalPhoto}>
                         </img>
                     </div>

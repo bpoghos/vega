@@ -6,6 +6,13 @@ import { Header } from '../../shared/Header/Header';
 import { fetchPostById } from '../../services/posts';
 import ImageModal from '../../shared/Modal/Modal';
 import styles from "./SinglePage.module.css";
+import AWS from 'aws-sdk';
+
+AWS.config.update({
+    region: 'eu-north-1',
+    accessKeyId: 'AKIA47CRVPKUXKOGIH6H',
+    secretAccessKey: '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'
+  });
 
 const SinglePage = () => {
     const params = useParams();
@@ -13,7 +20,7 @@ const SinglePage = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [photos, setPhotos] = useState({
-        general: null,
+        general: '',
         multiple: [],
         threed: [],
         plan: [],
@@ -29,7 +36,79 @@ const SinglePage = () => {
                 setIsLoading(true);
                 const res = await fetchPostById(params.id, abortController.signal );
                 setData(res);
-                setPhotos(processPhotos(res));
+                setPhotos((prevState) => {
+                    console.log(res);
+                    return {
+                        ...prevState,
+                        general: res.generalPhoto ? res.generalPhoto : '',
+                        multiple: res.multiplePhotos ? res.multiplePhotos : [],
+                        threed: res.threedPhotos ? res.threedPhotos : [],
+                        plan: res.planPhotos ? res.planPhotos : [],
+                        graphic: res.graphicPhotos ? res.graphicPhotos : [],
+                        detail: res.detailPhotos ? res.detailPhotos : []
+                    };
+
+                });
+                
+                const s3 = new AWS.S3();
+                const genImageUrl = s3.getSignedUrl('getObject', {
+                    Bucket: 'vega-project',
+                    Key: res.generalPhoto,
+                    Expires: 60 // URL expiry time in seconds
+                });
+    
+                const multipleImageUrl = res.multiplePhotos.map((image) => {
+                    return s3.getSignedUrl('getObject', {
+                        Bucket: 'vega-project',
+                        Key: image,
+                        Expires: 60 // URL expiry time in seconds
+                    });
+                }
+                );
+                const threedImageUrl = res.threedPhotos.map((image) => {
+                    return s3.getSignedUrl('getObject', {
+                        Bucket: 'vega-project',
+                        Key: image,
+                        Expires: 60 // URL expiry time in seconds
+                    });
+                }
+                );
+                const planImageUrl = res.planPhotos.map((image) => {
+                    return s3.getSignedUrl('getObject', {
+                        Bucket: 'vega-project',
+                        Key: image,
+                        Expires: 60 // URL expiry time in seconds
+                    });
+                }
+                );
+                const graphicImageUrl = res.graphicPhotos.map((image) => {
+                    return s3.getSignedUrl('getObject', {
+                        Bucket: 'vega-project',
+                        Key: image,
+                        Expires: 60 // URL expiry time in seconds
+                    });
+                }
+                );
+                const detailImageUrl = res.detailPhotos.map((image) => {
+                    return s3.getSignedUrl('getObject', {
+                        Bucket: 'vega-project',
+                        Key: image,
+                        Expires: 60 // URL expiry time in seconds
+                    });
+                }
+                );
+                setPhotos((prevState) => {
+                    return {
+                        ...prevState,
+                        general: genImageUrl,
+                        multiple: multipleImageUrl,
+                        threed: threedImageUrl,
+                        plan: planImageUrl,
+                        graphic: graphicImageUrl,
+                        detail: detailImageUrl
+                    };
+                });
+               
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -43,21 +122,6 @@ const SinglePage = () => {
     }, []);
 
    
-
-    const processPhotos = (data) => {
-        const processPhotoArray = (photoArray) =>
-            photoArray.map(d => URL.createObjectURL(new Blob([new Uint8Array(d.data)], { type: 'image/png' })));
-
-        return {
-            general: data.generalPhoto ? URL.createObjectURL(new Blob([new Uint8Array(data.generalPhoto.data)], { type: 'image/png' })) : null,
-            multiple: processPhotoArray(data.multiplePhotos),
-            threed: processPhotoArray(data.threedPhotos),
-            plan: processPhotoArray(data.planPhotos),
-            graphic: processPhotoArray(data.graphicPhotos),
-            detail: processPhotoArray(data.detailPhotos)
-        };
-    };
-
     const openModal = (imageUrl) => setModalState({ isOpen: true, selectedImageUrl: imageUrl });
     const closeModal = () => setModalState({ isOpen: false, selectedImageUrl: '' });
 
@@ -68,6 +132,7 @@ const SinglePage = () => {
     if (error) {
         return <div>Error: {error}</div>;
     }
+
 
     return (
         <div>
@@ -87,33 +152,43 @@ const SinglePage = () => {
             <ImageModal isOpen={modalState.isOpen} onClose={closeModal} imageUrl={modalState.selectedImageUrl} />
 
             {data && photos.general && (
-                <ImageSection label="generalPhoto" title='General Photos' images={[photos.general]} openModal={openModal} />
+                <ImageSection label="generalPhoto" title='General Photos' images={photos?.general} openModal={openModal} />
             )}
             {data && photos.multiple.length > 0 && (
-                <ImageSection label="multiplePhotos" title='Multiple Photos' images={photos.multiple} openModal={openModal} />
+                <ImageSection label="multiplePhotos" title='Multiple Photos' images={photos?.multiple} openModal={openModal} />
             )}
             {data && photos.threed.length > 0 && (
-                <ImageSection label="threedPhotos" title='3D Photos' images={photos.threed} openModal={openModal} />
+                <ImageSection label="threedPhotos" title='3D Photos' images={photos?.threed} openModal={openModal} />
             )}
             {data && photos.plan.length > 0 && (
-                <ImageSection label="planPhotos" title='Plan Photos' images={photos.plan} openModal={openModal} />
+                <ImageSection label="planPhotos" title='Plan Photos' images={photos?.plan} openModal={openModal} />
             )}
             {data && photos.graphic.length > 0 && (
-                <ImageSection label="graphicPhotos" title='Graphic Photos' images={photos.graphic} openModal={openModal} />
+                <ImageSection label="graphicPhotos" title='Graphic Photos' images={photos?.graphic} openModal={openModal} />
             )}
             {data && photos.detail.length > 0 && (
-                <ImageSection label="detailPhotos" title='Detail Photos' images={photos.detail} openModal={openModal} />
+                <ImageSection label="detailPhotos" title='Detail Photos' images={photos?.detail} openModal={openModal} />
             )}
         </div>
     );
 };
 
-const ImageSection = ({ title, images, openModal, label}) => (
+const ImageSection = ({ title, images, openModal, label}) => {
+console.log(images);
+return (
     <div className={styles[`${label}`]}>
         <div>
             {title}:
             <div className={styles[`${label}Scroll`]}>
-                {images.map((image, index) => (
+                
+                {!Array.isArray(images) ? 
+                <img
+                    alt=''
+                    src={images}
+                    onClick={() => openModal(images)}
+                    style={{ cursor: 'zoom-in' }}
+                    /> : images.length > 0 ?
+                 images?.map((image, index) => (
                     <img
                         key={`${title}-${index}`}
                         alt=''
@@ -121,10 +196,11 @@ const ImageSection = ({ title, images, openModal, label}) => (
                         onClick={() => openModal(image)}
                         style={{ cursor: 'zoom-in' }}
                     />
-                ))}
+                )): null}
             </div>
         </div>
     </div>
 );
+                }
 
 export default SinglePage;
