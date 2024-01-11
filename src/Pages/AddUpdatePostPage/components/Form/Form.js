@@ -5,7 +5,8 @@ import { generateYears, bufferToFile } from '../../../../helpers/helperFunctions
 import { CATEGORIES } from '../../../../helpers/constants';
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'
-import { fetchPostById } from '../../../../services/posts';
+import { deleteImage, fetchPostById } from '../../../../services/posts';
+import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import AWS from 'aws-sdk';
 
 
@@ -51,7 +52,7 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
     detailPhotos: [],
   });
 
-
+console.log(values);
   useEffect(() => {
     const fetchDefaultData = async () => {
       try {
@@ -63,6 +64,7 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
       const signal = abortController.current.signal;
         setIsLoading(true);
         const res = await fetchPostById(params.id, signal);
+        console.log(res, 'res');
         const s3 = new AWS.S3();
         const genImageUrl = s3.getSignedUrl('getObject', {
             Bucket: 'vega-project',
@@ -71,43 +73,58 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
         });
         console.log(genImageUrl);
         const multipleImageUrl = res.multiplePhotos.map((image) => {
-            return s3.getSignedUrl('getObject', {
+            return {
+             url: s3.getSignedUrl('getObject', {
                 Bucket: 'vega-project',
                 Key: image,
                 Expires: 60 // URL expiry time in seconds
-            });
+            }),
+            fileName: image
+          }
         }
         ); 
         const threedImageUrl = res.threedPhotos.map((image) => {
-            return s3.getSignedUrl('getObject', {
+            return {
+              url: s3.getSignedUrl('getObject', {
                 Bucket: 'vega-project',
                 Key: image,
                 Expires: 60 // URL expiry time in seconds
-            });
+            }),
+            fileName: image
+          };
         }
         );
         const planImageUrl = res.planPhotos.map((image) => {
-            return s3.getSignedUrl('getObject', {
+            return {
+              url: s3.getSignedUrl('getObject', {
                 Bucket: 'vega-project',
                 Key: image,
                 Expires: 60 // URL expiry time in seconds
-            });
+            }),
+            fileName: image
+            }
         }
         );
         const graphicImageUrl = res.graphicPhotos.map((image) => {
-            return s3.getSignedUrl('getObject', {
+            return {
+              url: s3.getSignedUrl('getObject', {
                 Bucket: 'vega-project',
                 Key: image,
                 Expires: 60 // URL expiry time in seconds
-            });
+            }),
+            fileName: image
+            }
         }
         );
         const detailImageUrl = res.detailPhotos.map((image) => {
-            return s3.getSignedUrl('getObject', {
+            return {
+              url: s3.getSignedUrl('getObject', {
                 Bucket: 'vega-project',
                 Key: image,
                 Expires: 60 // URL expiry time in seconds
-            });
+            }),
+            fileName: image
+            }
         }
         );
 
@@ -121,7 +138,10 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
           floor_area: res.floor_area,
           client: res.client,
           architects: res.architects,
-          generalPhoto: genImageUrl,
+          generalPhoto: {
+            url: genImageUrl,
+            fileName: res.generalPhoto
+            },
           multiplePhotos: multipleImageUrl,
           threedPhotos: threedImageUrl,
           planPhotos: planImageUrl,
@@ -157,7 +177,7 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
     setFieldErrors({ ...fieldErrors, [category]: false });
   };
 
-  const removeImage = (index, category) => { // modify with spaecial category images, not whole array
+  const removeImage = async (index, category, fileName) => { 
     if (category === 'generalPhoto') {
       setValues({ ...values, [category]: '' });
       return;
@@ -165,6 +185,7 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
     const newValues = { ...values };
     newValues[category].splice(index, 1);
     setValues(newValues);
+    await deleteImage( category, fileName);
   }
 
   const handlePhotosChange = (event, category) => {
@@ -216,16 +237,18 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
       formData.append('generalPhoto', values.generalPhoto);
     }
     for (const img of values.graphicPhotos) {
-      if(isEditPostPage && img?.length > 100){
-      formData.append('graphicPhotos', bufferToFile(img, 'graphicPhotos'));
+      if(isEditPostPage && img instanceof File){
+      formData.append('graphicPhotos', img);
       }else{
+        console.log(img, 'img');
         formData.append('graphicPhotos', img);
       }
     }
     for (const img of values.multiplePhotos) {
-      if(isEditPostPage && img?.length > 100){
-      formData.append('multiplePhotos', bufferToFile(img, 'multiplePhotos'));
+      if(isEditPostPage &&  img instanceof File){
+      formData.append('multiplePhotos', img);
     }else{
+      console.log(img, 'multiple img');
       formData.append('multiplePhotos', img);
     }
   }

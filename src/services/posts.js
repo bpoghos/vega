@@ -77,3 +77,21 @@ export const editPost = async (body, id) => {
         throw error;
     }
 }
+
+//delete post with /delete-image
+
+export const deleteImage = async (category, filename) => {
+    try {
+        const data = await fetch(`https://vega-project-server-ea1eccf7467b.herokuapp.com/api/delete-image`, {
+            method: 'DELETE',
+            body: JSON.stringify({ category, filename }),
+        })
+        if (!data.ok) {
+            throw new Error(`Failed to delete image, try again`);
+        }
+       return await data.json();
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}

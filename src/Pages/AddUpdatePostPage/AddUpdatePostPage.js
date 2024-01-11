@@ -31,16 +31,17 @@ const AddUpdatePostPage = () => {
     
 
     const editExistedPost = async (data) => {
-        setIsLoading(true);
-        try {
-            await editPost(data, params.id);
-            setError(null);
-            navigate('/admin/posts')
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setIsLoading(false);
-        }
+        console.log(data);
+        // setIsLoading(true);
+        // try {
+        //     await editPost(data, params.id);
+        //     setError(null);
+        //     navigate('/admin/posts')
+        // } catch (error) {
+        //     setError(error.message);
+        // } finally {
+        //     setIsLoading(false);
+        // }
     }
 
     return (

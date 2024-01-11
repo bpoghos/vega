@@ -5,6 +5,7 @@ import { FormError } from '../../Pages/AddUpdatePostPage/components/FormError/Fo
 import { useEffect, useRef } from 'react';
 
 export const Photos = ({ handlePhotoChange, label, category, error, values, removeImage }) => {
+    console.log(values);
 
     const [selectedImages, setSelectedImages] = useState([]);
 
@@ -61,23 +62,26 @@ export const Photos = ({ handlePhotoChange, label, category, error, values, remo
                     multiple={category !== 'generalPhoto'}
                 />
                 {error ? <FormError title={label} /> : null}
-                {values.map((image, index) => (
-                    <div key={index} style={{
-                        backgroundColor: '#fff',
-                        margin: '10px',
-                        borderRadius: '5px',
-                    }}>
-                        <div className={styles.removePhoto} onClick={() => removeHandle(index, category)}>X</div>
-                        <img
-                            src={image}
-                            alt={`Selected ${index + 1}`}
-                            style={{
-                                maxHeight: '100px',
-                                borderRadius: '5px',
-                            }}
-                        />
-                    </div>
-                ))}
+                {values.map((image, index) => {
+                    const fileToUrl = image instanceof File ? URL.createObjectURL(image) : image.url;
+                    return (
+                        <div key={index} style={{
+                            backgroundColor: '#fff',
+                            margin: '10px',
+                            borderRadius: '5px',
+                        }}>
+                            <div className={styles.removePhoto} onClick={() => removeHandle(index, category, image.fileName)}>X</div>
+                            <img
+                                src={fileToUrl}
+                                alt={`Selected ${index + 1}`}
+                                style={{
+                                    maxHeight: '100px',
+                                    borderRadius: '5px',
+                                }}
+                            />
+                        </div>
+                    )
+                })}
             </div>
         </Col>
     );

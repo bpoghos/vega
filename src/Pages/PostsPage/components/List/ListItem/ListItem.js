@@ -20,6 +20,13 @@ const imageUrl = s3.getSignedUrl('getObject', {
   Expires: 60 // URL expiry time in seconds
 });
 
+
+    AWS.config.update({
+        region: 'eu-north-1',
+        accessKeyId: 'AKIA47CRVPKUXKOGIH6H',
+        secretAccessKey: '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'
+      });
+
 console.log(imageUrl);
 
     const navigate = useNavigate()

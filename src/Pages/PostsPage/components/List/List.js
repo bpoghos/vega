@@ -1,5 +1,6 @@
 import { ListItem } from "./ListItem/ListItem"
 import { Col, Container, Row } from "react-bootstrap"
+import AWS from 'aws-sdk';
 
 export const List = ({ data, setData }) => {
 
