@@ -9,9 +9,9 @@ import styles from "./SinglePage.module.css";
 import AWS from 'aws-sdk';
 
 AWS.config.update({
-    region: 'eu-north-1',
-    accessKeyId: 'AKIA47CRVPKUXKOGIH6H',
-    secretAccessKey: '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'
+    region: process.env.REACT_APP_BUCKET_REGION,
+    accessKeyId: process.env.REACT_APP_ACCESS_KEY,
+    secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY
   });
 
 const SinglePage = () => {
@@ -37,7 +37,6 @@ const SinglePage = () => {
                 const res = await fetchPostById(params.id, abortController.signal );
                 setData(res);
                 setPhotos((prevState) => {
-                    console.log(res);
                     return {
                         ...prevState,
                         general: res.generalPhoto ? res.generalPhoto : '',
@@ -52,14 +51,14 @@ const SinglePage = () => {
                 
                 const s3 = new AWS.S3();
                 const genImageUrl = s3.getSignedUrl('getObject', {
-                    Bucket: 'vega-project',
+                    Bucket: 'new-vega-server',
                     Key: res.generalPhoto,
                     Expires: 60 // URL expiry time in seconds
                 });
     
                 const multipleImageUrl = res.multiplePhotos.map((image) => {
                     return s3.getSignedUrl('getObject', {
-                        Bucket: 'vega-project',
+                        Bucket: 'new-vega-server',
                         Key: image,
                         Expires: 60 // URL expiry time in seconds
                     });
@@ -67,7 +66,7 @@ const SinglePage = () => {
                 );
                 const threedImageUrl = res.threedPhotos.map((image) => {
                     return s3.getSignedUrl('getObject', {
-                        Bucket: 'vega-project',
+                        Bucket: 'new-vega-server',
                         Key: image,
                         Expires: 60 // URL expiry time in seconds
                     });
@@ -75,7 +74,7 @@ const SinglePage = () => {
                 );
                 const planImageUrl = res.planPhotos.map((image) => {
                     return s3.getSignedUrl('getObject', {
-                        Bucket: 'vega-project',
+                        Bucket: 'new-vega-server',
                         Key: image,
                         Expires: 60 // URL expiry time in seconds
                     });
@@ -83,7 +82,7 @@ const SinglePage = () => {
                 );
                 const graphicImageUrl = res.graphicPhotos.map((image) => {
                     return s3.getSignedUrl('getObject', {
-                        Bucket: 'vega-project',
+                        Bucket: 'new-vega-server',
                         Key: image,
                         Expires: 60 // URL expiry time in seconds
                     });
@@ -91,7 +90,7 @@ const SinglePage = () => {
                 );
                 const detailImageUrl = res.detailPhotos.map((image) => {
                     return s3.getSignedUrl('getObject', {
-                        Bucket: 'vega-project',
+                        Bucket: 'new-vega-server',
                         Key: image,
                         Expires: 60 // URL expiry time in seconds
                     });
@@ -174,7 +173,6 @@ const SinglePage = () => {
 };
 
 const ImageSection = ({ title, images, openModal, label}) => {
-console.log(images);
 return (
     <div className={styles[`${label}`]}>
         <div>

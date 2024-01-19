@@ -64,7 +64,7 @@ export const addPost = async (body) => {
 
 export const editPost = async (body, id) => {
     try {
-        const data = await fetch(`https://vega-project-server-ea1eccf7467b.herokuapp.com/update/${id}`, {
+        const data = await fetch(`${BASE_URL}update/${id}`, {
             method: 'PATCH',
             body,
         })
@@ -80,11 +80,10 @@ export const editPost = async (body, id) => {
 
 //delete post with /delete-image
 
-export const deleteImage = async (category, filename) => {
+export const deleteImage = async (filename) => {
     try {
-        const data = await fetch(`https://vega-project-server-ea1eccf7467b.herokuapp.com/api/delete-image`, {
-            method: 'DELETE',
-            body: JSON.stringify({ category, filename }),
+        const data = await fetch(`${BASE_URL}delete?filename=${filename}`, {
+            method: 'DELETE'
         })
         if (!data.ok) {
             throw new Error(`Failed to delete image, try again`);

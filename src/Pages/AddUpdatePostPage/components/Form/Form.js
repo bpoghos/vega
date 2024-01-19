@@ -6,18 +6,17 @@ import { CATEGORIES } from '../../../../helpers/constants';
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'
 import { deleteImage, fetchPostById } from '../../../../services/posts';
-import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import AWS from 'aws-sdk';
 
 
 export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPostPage, setIsLoading, setError }) => {
 
   AWS.config.update({
-    region: 'eu-north-1',
-    accessKeyId: 'AKIA47CRVPKUXKOGIH6H',
-    secretAccessKey: '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'
+    region: process.env.REACT_APP_BUCKET_REGION,
+    accessKeyId: process.env.REACT_APP_ACCESS_KEY,
+    secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY
   });
-  
+
   const params = useParams();
   const navigate = useNavigate();
 
@@ -33,6 +32,14 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
     client: false,
     architects: false,
     generalPhoto: false,
+  });
+  const [photoChange, setPhotoChange] = useState({
+    generalPhoto: false,
+    multiplePhotos: false,
+    threedPhotos: false,
+    planPhotos: false,
+    graphicPhotos: false,
+    detailPhotos: false,
   });
 
   const [values, setValues] = useState({
@@ -52,79 +59,76 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
     detailPhotos: [],
   });
 
-console.log(values);
   useEffect(() => {
     const fetchDefaultData = async () => {
       try {
         if (abortController.current) {
           abortController.current.abort();
-      }
-  
-      abortController.current = new AbortController();
-      const signal = abortController.current.signal;
+        }
+
+        abortController.current = new AbortController();
+        const signal = abortController.current.signal;
         setIsLoading(true);
         const res = await fetchPostById(params.id, signal);
-        console.log(res, 'res');
         const s3 = new AWS.S3();
         const genImageUrl = s3.getSignedUrl('getObject', {
-            Bucket: 'vega-project',
-            Key: res.generalPhoto,
-            Expires: 60 
+          Bucket: 'new-vega-server',
+          Key: res.generalPhoto,
+          Expires: 60
         });
-        console.log(genImageUrl);
         const multipleImageUrl = res.multiplePhotos.map((image) => {
-            return {
-             url: s3.getSignedUrl('getObject', {
-                Bucket: 'vega-project',
-                Key: image,
-                Expires: 60 // URL expiry time in seconds
+          return {
+            url: s3.getSignedUrl('getObject', {
+              Bucket: 'new-vega-server',
+              Key: image,
+              Expires: 60 // URL expiry time in seconds
             }),
             fileName: image
           }
         }
-        ); 
+        );
         const threedImageUrl = res.threedPhotos.map((image) => {
-            return {
-              url: s3.getSignedUrl('getObject', {
-                Bucket: 'vega-project',
-                Key: image,
-                Expires: 60 // URL expiry time in seconds
+          return {
+            url: s3.getSignedUrl('getObject', {
+              Bucket: 'new-vega-server',
+              Key: image,
+              Expires: 60 // URL expiry time in seconds
             }),
             fileName: image
           };
         }
         );
         const planImageUrl = res.planPhotos.map((image) => {
-            return {
-              url: s3.getSignedUrl('getObject', {
-                Bucket: 'vega-project',
-                Key: image,
-                Expires: 60 // URL expiry time in seconds
+          return {
+            url: s3.getSignedUrl('getObject', {
+              Bucket: 'new-vega-server',
+              Key: image,
+              Expires: 60 // URL expiry time in seconds
             }),
             fileName: image
-            }
+          }
         }
         );
         const graphicImageUrl = res.graphicPhotos.map((image) => {
-            return {
-              url: s3.getSignedUrl('getObject', {
-                Bucket: 'vega-project',
-                Key: image,
-                Expires: 60 // URL expiry time in seconds
+          return {
+            url: s3.getSignedUrl('getObject', {
+              Bucket: 'new-vega-server',
+              Key: image,
+              Expires: 60 // URL expiry time in seconds
             }),
             fileName: image
-            }
+          }
         }
         );
         const detailImageUrl = res.detailPhotos.map((image) => {
-            return {
-              url: s3.getSignedUrl('getObject', {
-                Bucket: 'vega-project',
-                Key: image,
-                Expires: 60 // URL expiry time in seconds
+          return {
+            url: s3.getSignedUrl('getObject', {
+              Bucket: 'new-vega-server',
+              Key: image,
+              Expires: 60 // URL expiry time in seconds
             }),
             fileName: image
-            }
+          }
         }
         );
 
@@ -141,14 +145,14 @@ console.log(values);
           generalPhoto: {
             url: genImageUrl,
             fileName: res.generalPhoto
-            },
+          },
           multiplePhotos: multipleImageUrl,
           threedPhotos: threedImageUrl,
           planPhotos: planImageUrl,
           graphicPhotos: graphicImageUrl,
           detailPhotos: detailImageUrl,
         }));
-        
+
       } catch (error) {
         setValues(null)
         setError(error.message);
@@ -161,8 +165,8 @@ console.log(values);
     return () => {
       if (abortController.current) {
         abortController.current.abort();
-    }
-  };
+      }
+    };
   }, [params.id, isEditPostPage, setIsLoading, setError]);
 
   const getYears = generateYears();
@@ -177,16 +181,32 @@ console.log(values);
     setFieldErrors({ ...fieldErrors, [category]: false });
   };
 
-  const removeImage = async (index, category, fileName) => { 
+  const removeImage = async (index, category, filename) => {
     if (category === 'generalPhoto') {
       setValues({ ...values, [category]: '' });
+      setPhotoChange({ ...photoChange, [category]: true })
+      if(isEditPostPage) {
+      await deleteImage(filename);
       return;
+      }
     }
+
     const newValues = { ...values };
     newValues[category].splice(index, 1);
-    setValues(newValues);
-    await deleteImage( category, fileName);
+
+    // Update the state properly
+    setValues({
+      ...values,
+      [category]: newValues[category],
+    });
+    setPhotoChange({ ...photoChange, [category]: true })
+
+    await Promise.resolve();
+    if (isEditPostPage) {
+      await deleteImage(filename);
+    }
   }
+
 
   const handlePhotosChange = (event, category) => {
     if (event) {
@@ -237,47 +257,75 @@ console.log(values);
       formData.append('generalPhoto', values.generalPhoto);
     }
     for (const img of values.graphicPhotos) {
-      if(isEditPostPage && img instanceof File){
-      formData.append('graphicPhotos', img);
-      }else{
-        console.log(img, 'img');
+      if (isEditPostPage) {
+        if (img instanceof File) {
+          formData.append('graphicPhotos', img);
+        } else if (photoChange.graphicPhotos === true) {
+          formData.append('graphicPhotos', img.fileName);
+        } else {
+          formData.append('graphicPhotos', img.fileName);
+        }
+      } else {
         formData.append('graphicPhotos', img);
       }
     }
     for (const img of values.multiplePhotos) {
-      if(isEditPostPage &&  img instanceof File){
-      formData.append('multiplePhotos', img);
-    }else{
-      console.log(img, 'multiple img');
-      formData.append('multiplePhotos', img);
+      if (isEditPostPage) {
+        if (img instanceof File) {
+          formData.append('multiplePhotos', img);
+        } else if (photoChange.multiplePhotos === true) {
+          formData.append('multiplePhotos', img.fileName);
+        } else {
+          formData.append('multiplePhotos', img.fileName);
+        }
+      } else {
+        formData.append('multiplePhotos', img);
+      }
     }
-  }
     for (const img of values.planPhotos) {
-      if(isEditPostPage && img?.length > 100){
-      formData.append('planPhotos', bufferToFile(img, 'planPhotos'));
-      }else{
+      if (isEditPostPage) {
+        if (img instanceof File) {
+          formData.append('planPhotos', img);
+        } else if (photoChange.planPhotos === true) {
+          formData.append('planPhotos', img.fileName);
+        } else {
+          formData.append('planPhotos', img.fileName);
+        }
+      } else {
         formData.append('planPhotos', img);
       }
     }
     for (const img of values.threedPhotos) {
-      if(isEditPostPage && img?.length > 100){
-      formData.append('threedPhotos', bufferToFile(img, 'threedPhotos'));
-      }else{
+      if (isEditPostPage) {
+        if (img instanceof File) {
+          formData.append('threedPhotos', img);
+        } else if (photoChange.threedPhotos === true) {
+          formData.append('threedPhotos', img.fileName);
+        } else {
+          formData.append('threedPhotos', img.fileName);
+        }
+      } else {
         formData.append('threedPhotos', img);
       }
     }
+
     for (const img of values.detailPhotos) {
-      if(isEditPostPage && img?.length > 100){
-        formData.append('detailPhotos', bufferToFile(img, 'detailPhotos'));
-        }else{
+      if (isEditPostPage) {
+        if (img instanceof File) {
           formData.append('detailPhotos', img);
+        } else if (photoChange.detailPhotos === true) {
+          formData.append('detailPhotos', img.fileName);
+        } else {
+          formData.append('detailPhotos', img.fileName);
         }
+      } else {
+        formData.append('detailPhotos', img);
+      }
     }
     isEditPostPage ? editExistedPost(formData) :
       addNewPost(formData)
     return formData
   };
-
   return (
     <>
       <Container className="mt-5 border-bottom border-secondary-subtle">
@@ -297,52 +345,52 @@ console.log(values);
 
       <Container className='mt-4 border-bottom border-secondary-subtle'>
         <Row>
-          <Photos label='Profile Photo' 
+          <Photos label='Profile Photo'
             name={'generalPhoto'}
             values={values.generalPhoto ? [values.generalPhoto] : []}
             removeImage={removeImage}
-            category={'generalPhoto'} 
-            handlePhotoChange={handlePhotoChange} 
-            error={fieldErrors.generalPhoto} 
+            category={'generalPhoto'}
+            handlePhotoChange={handlePhotoChange}
+            error={fieldErrors.generalPhoto}
           />
-          <Photos label='Multiple Photos' 
-            values={values.multiplePhotos} 
-            name={'multiplePhotos'} 
-            category={'multiplePhotos'} 
+          <Photos label='Multiple Photos'
+            values={values.multiplePhotos}
+            name={'multiplePhotos'}
+            category={'multiplePhotos'}
             handlePhotoChange={handlePhotosChange}
             removeImage={removeImage}
           />
           <Photos
             removeImage={removeImage}
-            label='3D' 
-            values={values.threedPhotos} 
-            name={'threedPhotos'} 
-            category={'threedPhotos'} 
-            handlePhotoChange={handlePhotosChange} 
+            label='3D'
+            values={values.threedPhotos}
+            name={'threedPhotos'}
+            category={'threedPhotos'}
+            handlePhotoChange={handlePhotosChange}
           />
           <Photos
             removeImage={removeImage}
-            label='Plans' 
-            values={values.planPhotos} 
-            name={'planPhotos'} 
-            category={'planPhotos'} 
-            handlePhotoChange={handlePhotosChange} 
+            label='Plans'
+            values={values.planPhotos}
+            name={'planPhotos'}
+            category={'planPhotos'}
+            handlePhotoChange={handlePhotosChange}
           />
           <Photos
             removeImage={removeImage}
-            label='Graphics' 
-            values={values.graphicPhotos} 
-            name={'graphicPhotos'} 
-            category={'graphicPhotos'} 
-            handlePhotoChange={handlePhotosChange} 
+            label='Graphics'
+            values={values.graphicPhotos}
+            name={'graphicPhotos'}
+            category={'graphicPhotos'}
+            handlePhotoChange={handlePhotosChange}
           />
           <Photos
             removeImage={removeImage}
-            label='Details' 
-            values={values.detailPhotos} 
-            name={'detailPhotos'} 
-            category={'detailPhotos'} 
-            handlePhotoChange={handlePhotosChange} 
+            label='Details'
+            values={values.detailPhotos}
+            name={'detailPhotos'}
+            category={'detailPhotos'}
+            handlePhotoChange={handlePhotosChange}
           />
         </Row>
       </Container>
@@ -350,7 +398,7 @@ console.log(values);
       <Container className='mt-4 pb-4 d-flex justify-content-center'>
         <CustomButton label={isEditPostPage ? "EDIT POST" : "ADD POST"} type='success' getValues={getValues} loading={isLoading} fieldErrors={fieldErrors} />
         {error || null}
-        <CustomButton label='CANCEL' type='outline-secondary' getValues={() => navigate(-1)}/>
+        <CustomButton label='CANCEL' type='outline-secondary' getValues={() => navigate(-1)} />
       </Container>
     </>
   );
