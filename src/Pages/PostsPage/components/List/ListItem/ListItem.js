@@ -46,16 +46,17 @@ export const ListItem = ({ post, data, setData, image }) => {
         <div className={styles.hatik}>
             <div className={styles.hatt} onClick={() => navigate(`/admin/posts/${post._id}`)}>
                 <div className={styles.hatikImage} >
-                    <img
+                    {imageUrl ? <img
                         style={{ height: '100%', borderRadius: '10px', }}
                         src={imageUrl}
                         alt={post.generalPhoto}>
-                    </img>
+                    </img> : <div style={{ height: '100%', borderRadius: '10px' }}>
+                    </div>}
                 </div>
                 <div className={styles.glxavorInfoBox}>
-                    <p className={styles.title}><strong>Title:</strong> {post.title}</p>
-                    <p className={styles.category}><strong>Category:</strong> {post.category}</p>
-                    <p className={styles.date}><strong>Date:</strong>{post.date.slice(0, 4)}</p>
+                    <p className={styles.title}><strong>Title:</strong> {post.title || ""}</p>
+                    <p className={styles.category}><strong>Category:</strong> {post.category || ''}</p>
+                    <p className={styles.date}><strong>Date:</strong>{post?.date?.slice(0, 4) || ""}</p>
                 </div>
             </div>
             <div className={styles.btnBox}>

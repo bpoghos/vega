@@ -1,5 +1,4 @@
 
-
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Header } from '../../shared/Header/Header';
@@ -147,6 +146,9 @@ const SinglePage = () => {
                 <p><strong>Floor area:</strong> {data.floor_area}</p>
                 <p><strong>Client:</strong> {data.client}</p>
                 <p><strong>Architects:</strong> {data.architects}</p>
+                <p><strong>Constructors:</strong> {data.constructors}</p>
+                <p><strong>Builders:</strong> {data.builders}</p>
+                <p><strong>Status:</strong> {data.status}</p>
             </div>
             <ImageModal isOpen={modalState.isOpen} onClose={closeModal} imageUrl={modalState.selectedImageUrl} />
 

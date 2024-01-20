@@ -1,12 +1,12 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Container, Row } from 'react-bootstrap';
-import { TextInput, TextArea, Photos, CustomButton, DropdownComponent } from '../../../../shared/FormComponents';
-import { generateYears, bufferToFile } from '../../../../helpers/helperFunctions';
-import { CATEGORIES } from '../../../../helpers/constants';
-import { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'
-import { deleteImage, fetchPostById } from '../../../../services/posts';
+import { useParams, useNavigate } from 'react-router-dom';
 import AWS from 'aws-sdk';
+
+import { TextInput, TextArea, Photos, CustomButton, DropdownComponent } from '../../../../shared/FormComponents';
+import { generateYears } from '../../../../helpers/helperFunctions';
+import { CATEGORIES, STATUSES } from '../../../../helpers/constants';
+import { deleteImage, fetchPostById } from '../../../../services/posts';
 
 
 export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPostPage, setIsLoading, setError }) => {
@@ -21,18 +21,19 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
   const navigate = useNavigate();
 
   const abortController = useRef()
+  const getYears = generateYears();
 
 
-  const [fieldErrors, setFieldErrors] = useState({
-    title: false,
-    description: false,
-    category: false,
-    location: false,
-    floor_area: false,
-    client: false,
-    architects: false,
-    generalPhoto: false,
-  });
+  // const [fieldErrors, setFieldErrors] = useState({
+  //   title: false,
+  //   description: false,
+  //   category: false,
+  //   location: false,
+  //   floor_area: false,
+  //   client: false,
+  //   architects: false,
+  //   generalPhoto: false,
+  // });
   const [photoChange, setPhotoChange] = useState({
     generalPhoto: false,
     multiplePhotos: false,
@@ -49,6 +50,9 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
     date: '',
     location: '',
     floor_area: '',
+    constructors: '',
+    builders: '',
+    status: '',
     client: '',
     architects: '',
     generalPhoto: '',
@@ -76,61 +80,27 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
           Key: res.generalPhoto,
           Expires: 60
         });
-        const multipleImageUrl = res.multiplePhotos.map((image) => {
-          return {
-            url: s3.getSignedUrl('getObject', {
-              Bucket: 'new-vega-server',
-              Key: image,
-              Expires: 60 // URL expiry time in seconds
-            }),
-            fileName: image
-          }
-        }
-        );
-        const threedImageUrl = res.threedPhotos.map((image) => {
-          return {
-            url: s3.getSignedUrl('getObject', {
-              Bucket: 'new-vega-server',
-              Key: image,
-              Expires: 60 // URL expiry time in seconds
-            }),
-            fileName: image
-          };
-        }
-        );
-        const planImageUrl = res.planPhotos.map((image) => {
-          return {
-            url: s3.getSignedUrl('getObject', {
-              Bucket: 'new-vega-server',
-              Key: image,
-              Expires: 60 // URL expiry time in seconds
-            }),
-            fileName: image
-          }
-        }
-        );
-        const graphicImageUrl = res.graphicPhotos.map((image) => {
-          return {
-            url: s3.getSignedUrl('getObject', {
-              Bucket: 'new-vega-server',
-              Key: image,
-              Expires: 60 // URL expiry time in seconds
-            }),
-            fileName: image
-          }
-        }
-        );
-        const detailImageUrl = res.detailPhotos.map((image) => {
-          return {
-            url: s3.getSignedUrl('getObject', {
-              Bucket: 'new-vega-server',
-              Key: image,
-              Expires: 60 // URL expiry time in seconds
-            }),
-            fileName: image
-          }
-        }
-        );
+        const generateSignedImageUrls = (imageArray) => {
+          const s3 = new AWS.S3();
+        
+          return imageArray.map((image) => {
+            return {
+              url: s3.getSignedUrl('getObject', {
+                Bucket: 'new-vega-server',
+                Key: image,
+                Expires: 60,
+              }),
+              fileName: image,
+            };
+          });
+        };
+        
+        const multipleImageUrl = generateSignedImageUrls(res.multiplePhotos);
+        const threedImageUrl = generateSignedImageUrls(res.threedPhotos);
+        const planImageUrl = generateSignedImageUrls(res.planPhotos);
+        const graphicImageUrl = generateSignedImageUrls(res.graphicPhotos);
+        const detailImageUrl = generateSignedImageUrls(res.detailPhotos);
+        
 
         setValues((v) => ({
           ...v,
@@ -140,6 +110,9 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
           date: new Date(res.date).getFullYear(),
           location: res.location,
           floor_area: res.floor_area,
+          constructors: res.constructors,
+          builders: res.builders,
+          status: res.status,
           client: res.client,
           architects: res.architects,
           generalPhoto: {
@@ -169,25 +142,24 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
     };
   }, [params.id, isEditPostPage, setIsLoading, setError]);
 
-  const getYears = generateYears();
 
   const handleSelect = (eventKey, category) => {
     setValues({ ...values, [category]: eventKey });
-    setFieldErrors({ ...fieldErrors, [category]: false });
+    // setFieldErrors({ ...fieldErrors, [category]: false });
   };
 
   const handleChange = (event, category) => {
     setValues({ ...values, [category]: event.target.value });
-    setFieldErrors({ ...fieldErrors, [category]: false });
+    // setFieldErrors({ ...fieldErrors, [category]: false });
   };
 
   const removeImage = async (index, category, filename) => {
     if (category === 'generalPhoto') {
       setValues({ ...values, [category]: '' });
       setPhotoChange({ ...photoChange, [category]: true })
-      if(isEditPostPage) {
-      await deleteImage(filename);
-      return;
+      if (isEditPostPage) {
+        await deleteImage(filename);
+        return;
       }
     }
 
@@ -224,26 +196,26 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
     } else {
       setValues({ ...values, [category]: '' });
     }
-    setFieldErrors({ ...fieldErrors, [category]: false });
+    // setFieldErrors({ ...fieldErrors, [category]: false });
   };
 
 
   const getValues = async () => {
-    const newFieldErrors = { ...fieldErrors };
-    let isValid = true
-    for (const field in newFieldErrors) {
-      if (!values[field]) {
-        newFieldErrors[field] = true;
-        isValid = false;
-      } else {
-        newFieldErrors[field] = false;
-      }
-    }
+    // const newFieldErrors = { ...fieldErrors };
+    // let isValid = true
+    // for (const field in newFieldErrors) {
+    //   if (!values[field]) {
+    //     newFieldErrors[field] = true;
+    //     isValid = false;
+    //   } else {
+    //     newFieldErrors[field] = false;
+    //   }
+    // }
 
-    setFieldErrors(newFieldErrors);
-    if (!isValid) {
-      return;
-    }
+    // setFieldErrors(newFieldErrors);
+    // if (!isValid) {
+    //   return;
+    // }
     const formData = new FormData();
     formData.append('title', values.title)
     formData.append('description', values.description)
@@ -251,6 +223,9 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
     formData.append('category', values.category)
     formData.append('client', values.client)
     formData.append('date', values.date)
+    formData.append('constructors', values.constructors)
+    formData.append('builders', values.builders)
+    formData.append('status', values.status)
     formData.append('floor_area', values.floor_area)
     formData.append('location', values.location)
     if (values.generalPhoto) {
@@ -329,18 +304,21 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
   return (
     <>
       <Container className="mt-5 border-bottom border-secondary-subtle">
-        <TextInput label='Title' name={"title"} category={'title'} handleChange={handleChange} error={fieldErrors.title} values={values} />
-        <TextArea label='Description' name={"description"} category={'description'} handleChange={handleChange} error={fieldErrors.description} values={values} />
-        <DropdownComponent data={getYears} handleSelect={handleSelect} category={'date'} label={'Date'} values={values} error={fieldErrors.date} />
+        <TextInput label='Title' name={"title"} category={'title'} handleChange={handleChange} /* error={fieldErrors.title} */ values={values} />
+        <TextArea label='Description' name={"description"} category={'description'} handleChange={handleChange} /* error={fieldErrors.description} */ values={values} />
+        <DropdownComponent data={getYears} handleSelect={handleSelect} category={'date'} label={'Date'} values={values} /* error={fieldErrors.date} */ />
       </Container>
 
       <Container className='mt-4 border-bottom border-secondary-subtle'>
-        <DropdownComponent data={CATEGORIES} handleSelect={handleSelect} label={'Category'} category={'category'} values={values} error={fieldErrors.category} />
-        <TextInput label='Location' name={'location'} category={'location'} handleChange={handleChange} error={fieldErrors.location} values={values}
+        <DropdownComponent data={CATEGORIES} handleSelect={handleSelect} label={'Category'} category={'category'} values={values} /* error={fieldErrors.category} */ />
+        <DropdownComponent data={STATUSES} handleSelect={handleSelect} label={'Satus'} category={'status'} values={values} /* error={fieldErrors.category} */ />
+        <TextInput label='Location' name={'location'} category={'location'} handleChange={handleChange} /* error={fieldErrors.location} */ values={values}
         />
-        <TextInput label='Floor area' name={'floor_area'} category={'floor_area'} handleChange={handleChange} error={fieldErrors.floor_area} values={values} />
-        <TextInput label='Client' name={'client'} category={'client'} handleChange={handleChange} error={fieldErrors.client} values={values} />
-        <TextInput label='Architects' name={'architects'} category={'architects'} handleChange={handleChange} error={fieldErrors.architects} values={values} />
+        <TextInput label='Floor area' name={'floor_area'} category={'floor_area'} handleChange={handleChange} /* error={fieldErrors.floor_area} */ values={values} />
+        <TextInput label='Client' name={'client'} category={'client'} handleChange={handleChange} /* error={fieldErrors.client} */ values={values} />
+        <TextInput label='Architects' name={'architects'} category={'architects'} handleChange={handleChange} /* error={fieldErrors.architects} */ values={values} />
+        <TextInput label='Constructors' name={'constructors'} category={'constructors'} handleChange={handleChange} /* error={fieldErrors.architects} */ values={values} />
+        <TextInput label='Builders' name={'builders'} category={'builders'} handleChange={handleChange} /* error={fieldErrors.architects} */ values={values} />
       </Container>
 
       <Container className='mt-4 border-bottom border-secondary-subtle'>
@@ -351,7 +329,7 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
             removeImage={removeImage}
             category={'generalPhoto'}
             handlePhotoChange={handlePhotoChange}
-            error={fieldErrors.generalPhoto}
+          // error={fieldErrors.generalPhoto}
           />
           <Photos label='Multiple Photos'
             values={values.multiplePhotos}
@@ -396,7 +374,7 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
       </Container>
 
       <Container className='mt-4 pb-4 d-flex justify-content-center'>
-        <CustomButton label={isEditPostPage ? "EDIT POST" : "ADD POST"} type='success' getValues={getValues} loading={isLoading} fieldErrors={fieldErrors} />
+        <CustomButton label={isEditPostPage ? "EDIT POST" : "ADD POST"} type='success' getValues={getValues} loading={isLoading}/*  fieldErrors={fieldErrors} */ />
         {error || null}
         <CustomButton label='CANCEL' type='outline-secondary' getValues={() => navigate(-1)} />
       </Container>

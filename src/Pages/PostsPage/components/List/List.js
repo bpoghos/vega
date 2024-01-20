@@ -8,7 +8,7 @@ export const List = ({ data, setData }) => {
             lg={12}
             className="mb-2"
             key={post._id}>
-            <ListItem post={post} data={data} setData={setData} image={post.generalPhoto}/>
+            <ListItem post={post} data={data} setData={setData} image={post?.generalPhoto || ""}/>
         </Col>
 
     }) : null

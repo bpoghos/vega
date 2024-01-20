@@ -30,5 +30,18 @@ export const CATEGORIES = [
     label: "Small Architectural Forms",
   },
 ];
-
+export const STATUSES = [
+  {
+    value: "concept",
+    label: "Concept",
+  },
+  {
+    value: "finished",
+    label: "Finished",
+  },
+  {
+    value: "unfinished",
+    label: "Unfinished",
+  }
+];
 export const BASE_URL = "http://localhost:27017/api/";
