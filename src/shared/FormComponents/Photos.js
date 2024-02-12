@@ -3,6 +3,7 @@ import styles from './FormComponents.module.css';
 import { FormError } from '../../Pages/AddUpdatePostPage/components/FormError/FormError';
 import { useRef } from 'react';
 
+
 export const Photos = ({ handlePhotoChange, label, category, error, values, removeImage }) => {
     const fileInputRef = useRef(null);
 
@@ -10,37 +11,36 @@ export const Photos = ({ handlePhotoChange, label, category, error, values, remo
         handlePhotoChange(e, category);
     };
 
+    const handlePlusClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
 
     return (
         <Col className='d-flex' lg={12}>
             <div className={styles.imageContainer}>
-                <FormLabel className='m-auto me-0 ms-0'>{label}:</FormLabel>
+                <FormLabel className={styles.photosLabel}>{label}:</FormLabel>
                 <FormControl
                     ref={fileInputRef}
                     onChange={handleChange}
                     type='file'
-                    style={{
-                        margin: '10px',
-                    }}
+                    className={styles.formControl}
                     multiple={category !== 'generalPhoto'}
                 />
+                <div onClick={handlePlusClick} className={styles.plusButton}>+</div>
                 {error ? <FormError title={label} /> : null}
                 {values.map((image, index) => {
                     const fileToUrl = image instanceof File ? URL.createObjectURL(image) : image.url;
                     return (
-                        <div key={index} style={{
-                            backgroundColor: '#fff',
-                            margin: '10px',
-                            borderRadius: '5px',
-                        }}>
+                        <div key={index}
+                            className={styles.photoFrame}
+                        >
                             <div className={styles.removePhoto} onClick={() => removeImage(index, category, image.fileName)}>X</div>
                             <img
                                 src={fileToUrl}
                                 alt={`Selected ${index + 1}`}
-                                style={{
-                                    maxHeight: '100px',
-                                    borderRadius: '5px',
-                                }}
+                                className={styles.selectedImage}
                             />
                         </div>
                     )

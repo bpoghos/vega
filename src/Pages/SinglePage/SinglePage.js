@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Header } from '../../shared/Header/Header';
@@ -11,7 +10,7 @@ AWS.config.update({
     region: process.env.REACT_APP_BUCKET_REGION,
     accessKeyId: process.env.REACT_APP_ACCESS_KEY,
     secretAccessKey: process.env.REACT_APP_SECRET_ACCESS_KEY
-  });
+});
 
 const SinglePage = () => {
     const params = useParams();
@@ -27,13 +26,13 @@ const SinglePage = () => {
         detail: []
     });
     const [modalState, setModalState] = useState({ isOpen: false, selectedImageUrl: '' });
-    
+
     useEffect(() => {
         const abortController = new AbortController();
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                const res = await fetchPostById(params.id, abortController.signal );
+                const res = await fetchPostById(params.id, abortController.signal);
                 setData(res);
                 setPhotos((prevState) => {
                     return {
@@ -47,14 +46,14 @@ const SinglePage = () => {
                     };
 
                 });
-                
+
                 const s3 = new AWS.S3();
                 const genImageUrl = s3.getSignedUrl('getObject', {
                     Bucket: 'new-vega-server',
                     Key: res.generalPhoto,
                     Expires: 60 // URL expiry time in seconds
                 });
-    
+
                 const multipleImageUrl = res.multiplePhotos.map((image) => {
                     return s3.getSignedUrl('getObject', {
                         Bucket: 'new-vega-server',
@@ -106,7 +105,7 @@ const SinglePage = () => {
                         detail: detailImageUrl
                     };
                 });
-               
+
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -119,7 +118,7 @@ const SinglePage = () => {
         };
     }, []);
 
-   
+
     const openModal = (imageUrl) => setModalState({ isOpen: true, selectedImageUrl: imageUrl });
     const closeModal = () => setModalState({ isOpen: false, selectedImageUrl: '' });
 
@@ -134,7 +133,7 @@ const SinglePage = () => {
 
     return (
         <div>
-            <Header param={data?._id} backIcon={true} editIcon={true} icon={false} title="Single Page" />
+            <Header param={data?._id} backIcon={true} editIcon={false} icon={true} title="Single Page" />
             <div className={styles.title}>
                 <h1><strong>Title:</strong> {data.title}</h1>
                 <h3><strong>Category:</strong> {data.category}</h3>
@@ -174,33 +173,33 @@ const SinglePage = () => {
     );
 };
 
-const ImageSection = ({ title, images, openModal, label}) => {
-return (
-    <div className={styles[`${label}`]}>
-        <div>
-            {title}:
-            <div className={styles[`${label}Scroll`]}>
-                
-                {!Array.isArray(images) ? 
-                <img
-                    alt=''
-                    src={images}
-                    onClick={() => openModal(images)}
-                    style={{ cursor: 'zoom-in' }}
-                    /> : images.length > 0 ?
-                 images?.map((image, index) => (
-                    <img
-                        key={`${title}-${index}`}
-                        alt=''
-                        src={image}
-                        onClick={() => openModal(image)}
-                        style={{ cursor: 'zoom-in' }}
-                    />
-                )): null}
+const ImageSection = ({ title, images, openModal, label }) => {
+    return (
+        <div className={styles[`${label}`]}>
+            <div>
+                {title}:
+                <div className={styles[`${label}Scroll`]}>
+
+                    {!Array.isArray(images) ?
+                        <img
+                            alt=''
+                            src={images}
+                            onClick={() => openModal(images)}
+                            style={{ cursor: 'zoom-in' }}
+                        /> : images.length > 0 ?
+                            images?.map((image, index) => (
+                                <img
+                                    key={`${title}-${index}`}
+                                    alt=''
+                                    src={image}
+                                    onClick={() => openModal(image)}
+                                    style={{ cursor: 'zoom-in' }}
+                                />
+                            )) : null}
+                </div>
             </div>
         </div>
-    </div>
-);
-                }
+    );
+}
 
 export default SinglePage;

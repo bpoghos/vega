@@ -9,7 +9,7 @@ const AddUpdatePostPage = () => {
 
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-    
+
     const navigate = useNavigate();
     const location = useLocation();
     const params = useParams();
@@ -21,14 +21,14 @@ const AddUpdatePostPage = () => {
         try {
             await addPost(data);
             setError(null);
-            navigate('/admin/posts'); 
+            navigate('/admin/posts');
         } catch (err) {
-            setError(err.message); 
+            setError(err.message);
         } finally {
             setIsLoading(false);
         }
     };
-    
+
 
     const editExistedPost = async (data) => {
         setIsLoading(true);
@@ -45,14 +45,16 @@ const AddUpdatePostPage = () => {
 
     return (
         <div>
-            <Header icon={true} title={isEditPostPage ? EDIT_POST : ADD_POST} />
+
+
+            <Header icon={true} title={isEditPostPage ? EDIT_POST : ADD_POST} backIcon={isEditPostPage ? true : false} />
             <Form
                 addNewPost={addNewPost}
                 editPost={editExistedPost}
                 isLoading={isLoading}
                 error={error}
-                isEditPostPage={isEditPostPage} 
-                editExistedPost={editExistedPost} 
+                isEditPostPage={isEditPostPage}
+                editExistedPost={editExistedPost}
                 setIsLoading={setIsLoading}
                 setError={setError}
             />

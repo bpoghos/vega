@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { deletePost } from "../../../../../services/posts";
 import styles from './list-item.module.css'
 import AWS from 'aws-sdk';
+import { Loading } from "../../../../../shared/Loading/Loading";
 
 AWS.config.update({
     region: process.env.REACT_APP_BUCKET_REGION,
@@ -41,7 +42,7 @@ export const ListItem = ({ post, data, setData, image }) => {
     };
 
     return (<>
-        {loading && <p>Loading...</p>}
+        {loading && <Loading />}
         {error && <p style={{ color: 'red' }}>{error}</p>}
         <div className={styles.hatik}>
             <div className={styles.hatt} onClick={() => navigate(`/admin/posts/${post._id}`)}>

@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaArrowLeft, FaHouse, FaPencil } from 'react-icons/fa6';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from './header.module.css';
+import { fetchPostById } from '../../services/posts';
 
-export const Header = ({ icon, title, backIcon, edittIcon, param }) => {
+export const Header = ({ icon, title, backIcon, editIcon, param }) => {
   const navigate = useNavigate();
+
 
   const HomeIcon = () => (
     <div className={styles.homeBtnBox}>
@@ -25,7 +27,7 @@ export const Header = ({ icon, title, backIcon, edittIcon, param }) => {
 
   const EditIcon = () => (
     <div className={styles.editBtnBox}>
-      <button className={styles.homeBtn} onClick={() => navigate(`/admin/posts/${param}`)}>
+      <button className={styles.homeBtn} onClick={() => navigate(`/admin/edit-post/{post._id}`)}>
         <FaPencil />
       </button>
     </div>
@@ -34,9 +36,9 @@ export const Header = ({ icon, title, backIcon, edittIcon, param }) => {
   return (
     <header className={styles.header}>
       <div className={styles.icons}>
-        {icon && <HomeIcon />}
         {backIcon && <BackIcon />}
-        {edittIcon && <EditIcon />}
+        {icon && <HomeIcon />}
+        {editIcon && <EditIcon />}
       </div>
       <h1 className={styles.title}>{title}</h1>
     </header>

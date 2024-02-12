@@ -82,7 +82,7 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
         });
         const generateSignedImageUrls = (imageArray) => {
           const s3 = new AWS.S3();
-        
+
           return imageArray.map((image) => {
             return {
               url: s3.getSignedUrl('getObject', {
@@ -94,13 +94,13 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
             };
           });
         };
-        
+
         const multipleImageUrl = generateSignedImageUrls(res.multiplePhotos);
         const threedImageUrl = generateSignedImageUrls(res.threedPhotos);
         const planImageUrl = generateSignedImageUrls(res.planPhotos);
         const graphicImageUrl = generateSignedImageUrls(res.graphicPhotos);
         const detailImageUrl = generateSignedImageUrls(res.detailPhotos);
-        
+
 
         setValues((v) => ({
           ...v,
@@ -164,7 +164,7 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
     }
 
     const newValues = { ...values };
-    newValues[category].splice(index, 1);
+    newValues[category].splice(index, 1)
 
     // Update the state properly
     setValues({
@@ -303,6 +303,7 @@ export const Form = ({ addNewPost, editExistedPost, isLoading, error, isEditPost
   };
   return (
     <>
+
       <Container className="mt-5 border-bottom border-secondary-subtle">
         <TextInput label='Title' name={"title"} category={'title'} handleChange={handleChange} /* error={fieldErrors.title} */ values={values} />
         <TextArea label='Description' name={"description"} category={'description'} handleChange={handleChange} /* error={fieldErrors.description} */ values={values} />

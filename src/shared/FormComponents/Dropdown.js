@@ -1,7 +1,6 @@
-import React from 'react';
 import { Col, Dropdown, FormLabel, Row } from 'react-bootstrap';
 import { FormError } from '../../Pages/AddUpdatePostPage/components/FormError/FormError';
-import classes from './FormComponents.module.css'
+import styles from './FormComponents.module.css'
 
 export const DropdownComponent = ({ data, category, label, handleSelect, values, error }) => {
 
@@ -10,7 +9,7 @@ export const DropdownComponent = ({ data, category, label, handleSelect, values,
       <Col lg={4}></Col>
       <Col lg={4} className="d-flex align-items-center justify-content-end mb-4">
         <FormLabel className="me-3 m-0" >{label}:</FormLabel>
-        <Dropdown className={classes.btn} onSelect={(e) => handleSelect(e, category)}>
+        <Dropdown className={styles.dropDownBtn} onSelect={(e) => handleSelect(e, category)}>
           <Dropdown.Toggle id="dropdown-basic">{values[category] || '-Select-'}</Dropdown.Toggle>
           <Dropdown.Menu
             style={{
@@ -19,11 +18,11 @@ export const DropdownComponent = ({ data, category, label, handleSelect, values,
             }}
           >
             {data.map((d) => (
-              <Dropdown.Item key={d.value} eventKey={d.value}>{d.label}</Dropdown.Item>
+              <Dropdown.Item key={d.value} eventKey={d.label}>{d.label}</Dropdown.Item>
             ))}
           </Dropdown.Menu>
         </Dropdown>
-        {error ? <FormError title={label}/> : null}
+        {error ? <FormError title={label} /> : null}
       </Col>
       <Col lg={4}></Col>
     </Row>

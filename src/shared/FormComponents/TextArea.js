@@ -1,6 +1,7 @@
 import React from 'react'
 import { Col, FormControl, FormLabel, Row } from 'react-bootstrap'
 
+import styles from "./FormComponents.module.css"
 
 export const TextArea = ({ label, category, handleChange, error, values }) => {
   return (
@@ -10,7 +11,7 @@ export const TextArea = ({ label, category, handleChange, error, values }) => {
         <FormLabel className="me-3 m-0">{label}:</FormLabel>
         <FormControl
           value={values[category]}
-          style={{ width: '270px', height: '100px', marginRight: '30px' }}
+          className={styles.textArea}
           as='textarea'
           name={label}
           onChange={(e) => handleChange(e, category)}

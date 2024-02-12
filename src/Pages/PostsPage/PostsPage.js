@@ -4,6 +4,7 @@ import { POSTS } from "../../helpers/constants";
 import { fetchPosts } from '../../services/posts';
 import { Categories } from "./components/Categories/Categories";
 import { Header } from "../../shared/Header/Header";
+import { Loading } from "../../shared/Loading/Loading"
 
 const PostsPage = () => {
     const [data, setData] = useState([]);
@@ -20,12 +21,12 @@ const PostsPage = () => {
         if (abortController.current) {
             abortController.current.abort();
         }
-    
+
         abortController.current = new AbortController();
         const signal = abortController.current.signal;
-    
+
         setIsLoading(true);
-    
+
         const getPosts = async () => {
             setIsLoading(true);
             try {
@@ -43,23 +44,23 @@ const PostsPage = () => {
                 }
             }
         };
-    
+
         getPosts();
-    
+
         return () => {
             if (abortController.current) {
                 abortController.current.abort();
             }
         }
     }, [selectedCategory]);
-    
+
 
     return (
         <div style={{ width: '100%', height: '100vh', background: '#000' }}>
             <Header icon={true} title={POSTS} />
             <Categories onCategorySelect={handleCategorySelect} />
 
-            {isLoading && <p>Loading...</p>}
+            {isLoading && <Loading />}
 
             {error && <p>Error: {error}</p>}
 
